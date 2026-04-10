@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\categories;
 use Illuminate\Http\Request;
 
-class AnnonceController extends Controller
+class CategoriesController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -12,7 +13,8 @@ class AnnonceController extends Controller
     public function index()
     {
         //
-        return view('annonces.index');
+        $categories = categories::all();
+        return view('categories.index', compact('categories'));
     }
 
     /**
@@ -21,6 +23,7 @@ class AnnonceController extends Controller
     public function create()
     {
         //
+        return view('categories.create');
     }
 
     /**
@@ -28,7 +31,12 @@ class AnnonceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $validated = $request->validate([
+        'name' => 'required|string|max:255',
+         ]);
+         categories::create($validated);
+         return redirect('/categories')->with('success', 'Category created successfully.');
     }
 
     /**

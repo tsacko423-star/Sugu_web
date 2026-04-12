@@ -35,5 +35,16 @@ class User extends Authenticatable
     public function isUser(){
         return $this->role === 'user';
          }
+    public function annonces(){
+         return $this->hasMany(Annonce::class);
+         }
+
+    public function messagesEnvoyes(){
+          return $this->hasMany(Message::class, 'sender_id');
+         }
+
+    public function messagesRecus(){
+          return $this->hasMany(Message::class, 'receiver_id');
+         }     
 
 }

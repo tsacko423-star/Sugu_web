@@ -28,7 +28,8 @@ class AnnonceAttributsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+       AnnonceAttribut::create($request->all());
+        return back();
     }
 
     /**
@@ -60,6 +61,7 @@ class AnnonceAttributsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        AnnonceAttribut::destroy($id);
+        return back();
     }
 }

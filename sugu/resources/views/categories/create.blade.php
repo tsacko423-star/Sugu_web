@@ -11,7 +11,7 @@
                     <br>
 
                     <div class="mt-4 flex items-center justify-end">
-                       <button class="btn btn-primary" type="button" data-bs-toggle="collapse"  aria-expanded="false" >
+                       <button class="btn btn-primary" type="submit" data-bs-toggle="collapse"  aria-expanded="false" >
                             Enregistrer
                         </button> <br>
                     </div>

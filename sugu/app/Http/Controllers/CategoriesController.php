@@ -53,6 +53,9 @@ class CategoriesController extends Controller
     public function edit(string $id)
     {
         //
+        $category = Categorie::findOrFail($id);
+        return view('categories.edit', compact('category'));
+
     }
 
     /**
@@ -61,6 +64,12 @@ class CategoriesController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]); 
+        $category = Categorie::findOrFail($id);
+        $category->update($validated);
+        return redirect('/categories')->with('success', 'Category updated successfully.');
     }
 
     /**

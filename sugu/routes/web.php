@@ -24,8 +24,9 @@ Route::middleware('auth')->group(function () {
 Route::get('/acceuil', [AnnonceController::class, 'index'])->name('acceuil');
 
 Route::resource('annonces', AnnonceController::class);
-Route::resource('categories', CategoriesController::class)->except(['create', 'store']);
+Route::resource('categories', CategoriesController::class);
 Route::resource('attributs', AttributsController::class);
+// Route::post('/categories', [CategoriesController::class, 'store'])->name('categories.store');
 Route::post('/message/send', [MessagesController::class, 'send']);
 Route::get('/messages/inbox', [MessagesController::class, 'inbox']);
 Route::get('/messages/sent', [MessagesController::class, 'sent']);

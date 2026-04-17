@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 use App\Models\Annonce;
+use App\Models\AnnonceAttribut;
+use App\Models\Categorie;
 use Illuminate\Http\Request;
 
 class AnnonceController extends Controller
@@ -73,7 +75,7 @@ class AnnonceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-         $annonce = Annonce::findOrFail($id);
+        $annonce = Annonce::findOrFail($id);
         $annonce->update($request->all());
         return redirect()->route('annonces.index');
     }

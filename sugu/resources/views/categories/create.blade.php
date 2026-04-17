@@ -5,6 +5,7 @@
     </h1>
      <form method="POST" action="{{ route('categories.store') }}">
                     @csrf
+                   
                     <div class="form-control w-full">
                         <input type="text" name="name" class="input input-bordered w-full" />
                     </div>

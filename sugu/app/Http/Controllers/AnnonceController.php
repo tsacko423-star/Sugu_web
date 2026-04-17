@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Models\Annonce;
+use App\Models\AnnonceAttribut;
+use App\Models\Categorie;
 use Illuminate\Http\Request;
 
 class AnnonceController extends Controller
@@ -11,8 +13,8 @@ class AnnonceController extends Controller
      */
     public function index()
     {
-        //
-        return view('annonces.index');
+         $annonces = Annonce::with('user', 'categorie')->get();
+        return view('annonces.index', compact('annonces'));
     }
 
     /**
@@ -20,7 +22,8 @@ class AnnonceController extends Controller
      */
     public function create()
     {
-        //
+         $categories = Categorie::all();
+        return view('annonces.create', compact('categories'));
     }
 
     /**
@@ -28,7 +31,25 @@ class AnnonceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         $annonce = Annonce::create([
+            'titre' => $request->titre,
+            'description' => $request->description,
+            'prix' => $request->prix,
+            'user_id' => auth()->id(),
+            'categorie_id' => $request->categorie_id,
+        ]);
+          // ajouter attributs dynamiques
+        if($request->attributs){
+            foreach($request->attributs as $key => $value){
+                AnnonceAttribut::create([
+                    'annonce_id' => $annonce->id,
+                    'nom' => $key,
+                    'valeur' => $value,
+                ]);
+            }
+        }
+
+        return redirect()->route('annonces.index');
     }
 
     /**
@@ -36,7 +57,8 @@ class AnnonceController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $annonce = Annonce::with('user', 'categorie')->findOrFail($id);
+        return view('annonces.show', compact('annonce'));
     }
 
     /**
@@ -44,7 +66,8 @@ class AnnonceController extends Controller
      */
     public function edit(string $id)
     {
-        //
+       $annonce = Annonce::findOrFail($id);
+        return view('annonces.edit', compact('annonce'));
     }
 
     /**
@@ -52,7 +75,9 @@ class AnnonceController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $annonce = Annonce::findOrFail($id);
+        $annonce->update($request->all());
+        return redirect()->route('annonces.index');
     }
 
     /**
@@ -60,6 +85,7 @@ class AnnonceController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        Annonce::destroy($id);
+        return back();
     }
 }

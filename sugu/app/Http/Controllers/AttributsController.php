@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attribut;
 use Illuminate\Http\Request;
 
 class AttributsController extends Controller
@@ -11,7 +12,8 @@ class AttributsController extends Controller
      */
     public function index()
     {
-        //
+         $attributs = Attribut::all();
+        return view('attributs.index', compact('attributs'));
     }
 
     /**
@@ -27,7 +29,11 @@ class AttributsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+         Attribut::create([
+            'nom' => $request->nom
+        ]);
+
+        return back();
     }
 
     /**
@@ -52,13 +58,16 @@ class AttributsController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy($id)
     {
-        //
+        Attribut::destroy($id);
+        return back();
     }
 }
+

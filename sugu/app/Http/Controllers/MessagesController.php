@@ -30,6 +30,29 @@ class MessagesController extends Controller
         //
     }
 
+    public function send(Request $request)
+    {
+        Message::create([
+            'contenu' => $request->contenu,
+            'sender_id' => auth()->id(),
+            'receiver_id' => $request->receiver_id,
+             ]);
+
+        return back();
+    }
+
+    public function inbox()
+    {
+        $messages = Message::where('receiver_id', auth()->id())->get();
+        return view('messages.inbox', compact('messages'));
+    }
+
+    public function sent()
+    {
+        $messages = Message::where('sender_id', auth()->id())->get();
+        return view('messages.sent', compact('messages'));
+    }
+
     /**
      * Display the specified resource.
      */

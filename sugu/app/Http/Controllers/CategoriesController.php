@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\categories;
+use App\Models\Categorie;
 use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
@@ -12,8 +12,7 @@ class CategoriesController extends Controller
      */
     public function index()
     {
-        //
-        $categories = categories::all();
+        $categories = Categorie::all();
         return view('categories.index', compact('categories'));
     }
 
@@ -31,12 +30,13 @@ class CategoriesController extends Controller
      */
     public function store(Request $request)
     {
-
         $validated = $request->validate([
-        'name' => 'required|string|max:255',
-         ]);
-         categories::create($validated);
-         return redirect('/categories')->with('success', 'Category created successfully.');
+            'name' => 'required|string|max:255',
+        ]);
+
+        Categorie::create($validated);
+
+        return redirect('/categories')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -53,6 +53,9 @@ class CategoriesController extends Controller
     public function edit(string $id)
     {
         //
+        $category = Categorie::findOrFail($id);
+        return view('categories.edit', compact('category'));
+
     }
 
     /**
@@ -61,6 +64,12 @@ class CategoriesController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+        ]); 
+        $category = Categorie::findOrFail($id);
+        $category->update($validated);
+        return redirect('/categories')->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -68,6 +77,7 @@ class CategoriesController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+          Categorie::destroy($id);
+        return back();
     }
 }

@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Models\Annonce;
 use App\Models\AnnonceAttribut;
 use App\Models\Categorie;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AnnonceController extends Controller
 {
@@ -35,7 +37,7 @@ class AnnonceController extends Controller
             'titre' => $request->titre,
             'description' => $request->description,
             'prix' => $request->prix,
-            'user_id' => auth()->id(),
+            'user_id' => Auth()->id(),
             'categorie_id' => $request->categorie_id,
         ]);
           // ajouter attributs dynamiques
@@ -88,4 +90,22 @@ class AnnonceController extends Controller
         Annonce::destroy($id);
         return back();
     }
+
+    public function dashboard()
+{
+    $user = auth()->user();
+
+    // si admin
+    if ($user->is_admin) {
+        $annonces = Annonce::with('user')->latest()->get();
+        $users = User::count();
+
+        return view('dashboard.admin', compact('annonces', 'users'));
+    }
+
+    // utilisateur normal
+    $annonces = Annonce::where('user_id', $user->id)->latest()->get();
+
+    return view('dashboard.user', compact('annonces'));
+}
 }

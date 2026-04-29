@@ -9,7 +9,7 @@
 <div class="collapse navbar-collapse" id="menu">
 <ul class="navbar-nav ms-auto">
 <li class="nav-item"><a class="nav-link" href="#">Accueil</a></li>
-<li class="nav-item"><a class="nav-link" href="#immobilier">Immobilier</a></li>
+<li class="nav-item"><a class="nav-link" href="#bien">Biens</a></li>
 <li class="nav-item"><a class="nav-link" href="#voitures">Voitures</a></li>
 <li class="nav-item"><a class="nav-link" href="#emploi">Emplois</a></li>
 </ul>

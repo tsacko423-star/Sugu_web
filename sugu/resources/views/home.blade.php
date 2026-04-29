@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="fr">
+﻿<!DOCTYPE html><html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -129,7 +129,9 @@ footer {
 @foreach($biens as $bien)
 <div class="col-md-4">
     <div class="card">
-        <img src="{{ $bien->image }}">
+        @if($bien->image)
+            <img src="{{ asset('storage/' . $bien->image) }}" alt="{{ $bien->titre }}">
+        @endif
         <div class="card-body">
             <h5>{{ $bien->titre }}</h5>
             <p>{{ $bien->prix }} FCFA - {{ $bien->ville }}</p>
@@ -149,7 +151,9 @@ footer {
 @foreach($voitures as $voiture)
 <div class="col-md-4">
     <div class="card">
-        <img src="{{ $voiture->image }}">
+        @if($voiture->image)
+            <img src="{{ asset('storage/' . $voiture->image) }}" alt="{{ $voiture->marque }} {{ $voiture->modele }}">
+        @endif
         <div class="card-body">
             <h5>{{ $voiture->marque }} {{ $voiture->modele }}</h5>
             <p>{{ $voiture->prix }} FCFA</p>

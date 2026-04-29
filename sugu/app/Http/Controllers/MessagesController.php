@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Facades\Auth;
+use App\Models\Message;
 use Illuminate\Http\Request;
 
 class MessagesController extends Controller

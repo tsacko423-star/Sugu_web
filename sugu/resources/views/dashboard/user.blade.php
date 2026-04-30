@@ -1,22 +1,14 @@
-<h1>👤 Mon Dashboard </h1>
-
-<a href="{{ route('annonces.create') }}">➕ Ajouter une annonce</a>
-
-<hr>
-
-<h2>📦 Mes annonces</h2>
-
-@foreach($annonces as $annonce)
-    <div style="border:1px solid #ccc; margin:10px; padding:10px;">
-        <h3>{{ $annonce->titre }}</h3>
-        <p>{{ $annonce->prix }} FCFA</p>
-
-        <a href="{{ route('annonces.edit', $annonce->id) }}">✏️ Modifier</a>
-
-        <form action="{{ route('annonces.destroy', $annonce->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button onclick="return confirm('Supprimer ?')">🗑 Supprimer</button>
-        </form>
-    </div>
-@endforeach
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Bienvenue, {{ Auth::user()->name }}!</h1>
+    <p>Ceci est votre tableau de bord utilisateur.</p>
+    <p>Vous pouvez voir vos annonces, messages, et gérer votre profil ici.</p>
+    
+</body>
+</html>

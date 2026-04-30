@@ -52,7 +52,60 @@ class VoitureController extends Controller
         $voitures = Voiture::latest()->get();
         $emplois = Emploi::latest()->get();
 
-        return view('home', compact('biens', 'voitures', 'emplois'));
+        return view('voitures.index', compact('biens', 'voitures', 'emplois'));
     }
+
+    public function show($id)
+    {
+        $voiture = Voiture::findOrFail($id);
+        return view('voitures.show', compact('voiture'));
+    }
+
+    public function edit($id)
+    {
+        $voiture = Voiture::findOrFail($id);
+        return view('voitures.edit', compact('voiture'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $voiture = Voiture::findOrFail($id);
+
+        $request->validate([
+            'marque' => 'required|string|max:255',
+            'modele' => 'required|string|max:255',
+            'annee' => 'required|integer',
+            'prix' => 'required|numeric',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+
+        // Upload new image if provided
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('voitures', 'public');
+            $voiture->image = $imagePath;
+        }
+
+        // Mise à jour
+        $voiture->update([
+            'marque' => $request->marque,
+            'modele' => $request->modele,
+            'annee' => $request->annee,
+            'prix' => $request->prix,
+        ]);
+
+        // Redirection vers page publique
+        return redirect()->route('home')
+            ->with('success', 'Voiture mise à jour avec succès');
+    }
+
+    public function destroy($id)
+    {
+        $voiture = Voiture::findOrFail($id);
+        $voiture->delete();
+
+        return redirect()->route('home')
+            ->with('success', 'Voiture supprimée avec succès');
+
+     }          
 }
 

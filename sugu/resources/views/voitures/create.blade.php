@@ -3,26 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <title>Ajouter une voiture</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
+<body class="bg-light">
 
-<h2>Ajouter une voiture</h2>
+<div class="container mt-5">
+    <div class="card shadow p-4">
+        <h2 class="text-center mb-4">Ajouter une voiture</h2>
 
-@if(session('success'))
-    <p style="color: green">{{ session('success') }}</p>
-@endif
+        @if(session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
-<form action="{{ route('voitures.store') }}" method="POST" enctype="multipart/form-data">
-    @csrf
+        <form action="{{ route('voitures.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
-    <input type="text" name="marque" placeholder="Marque" required><br><br>
-    <input type="text" name="modele" placeholder="Modèle" required><br><br>
-    <input type="number" name="annee" placeholder="Année" required><br><br>
-    <input type="number" name="prix" placeholder="Prix" required><br><br>
-    <input type="file" name="image" required><br><br>
+            <div class="mb-3">
+                <label class="form-label">Marque</label>
+                <input type="text" name="marque" class="form-control" placeholder="Ex: Toyota" required>
+            </div>
 
-    <button type="submit">Ajouter</button>
-</form>
+            <div class="mb-3">
+                <label class="form-label">Modèle</label>
+                <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Année</label>
+                <input type="number" name="annee" class="form-control" placeholder="Ex: 2020" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Prix</label>
+                <input type="number" name="prix" class="form-control" placeholder="Ex: 5000000" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Image</label>
+                <input type="file" name="image" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Ajouter</button>
+        </form>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

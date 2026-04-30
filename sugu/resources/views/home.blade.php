@@ -2,7 +2,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sugu Web </title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<title>Sugu Web </title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"><style>
 body {
     background: #262222;
@@ -114,6 +116,21 @@ footer {
 <li class="nav-item"><a class="nav-link" href="#immobilier">Immobilier</a></li>
 <li class="nav-item"><a class="nav-link" href="#voitures">Voitures</a></li>
 <li class="nav-item"><a class="nav-link" href="#emploi">Emplois</a></li>
+<div class="dropdown">
+  <button class="btn btn-dark rounded-circle" type="button" data-bs-toggle="dropdown">
+    <i class="bi bi-person"></i>
+  </button>
+
+  <ul class="dropdown-menu dropdown-menu-end">
+     <li ><a href="{{ route('register') }}"class="dropdown-item">Register</a></li>
+     <li ><a href="{{ route('login') }}"class="dropdown-item">Login</a></li>
+ </ul>
+</div>
+   <a href="{{ route('annonces.index') }}"
+    class="btn btn-dark rounded-pill d-flex align-items-center px-3 py-2">
+    <i class="bi bi-plus" style="font-size: 24px; color: white;"></i>
+    <span class="ms-1">Publier</span>
+</a>
 </ul>
 </div>
 </div>

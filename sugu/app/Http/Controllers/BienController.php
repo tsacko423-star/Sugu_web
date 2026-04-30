@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 
-class Bien_Controller extends Controller
+class BienController extends Controller
 {
     /**
      * Display a listing of the resource.

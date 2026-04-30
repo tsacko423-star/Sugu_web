@@ -2,12 +2,12 @@
 
 use App\Http\Controllers\AnnonceController;
 use App\Http\Controllers\AttributsController;
-use App\Http\Controllers\BienController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\EmploieController;
 use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\VoitureController;
+use App\Http\Controllers\BienController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\HomeController;
@@ -21,7 +21,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/voitures/create', [VoitureController::class, 'create'])->name('voitures.create');
     Route::post('/voitures', [VoitureController::class, 'store'])->name('voitures.store');
-    Route::get('/dashboard', [AnnonceController::class, 'dashboard'])->name('dashboard');
     Route::get ('/emplois/create', [EmploieController::class, 'create'])->name('emploie.create');
     Route::post('/emplois', [EmploieController::class, 'store'])->name('emplois.store');
     Route::get('/bien/create', [BienController::class, 'create'])->name('bien.create');

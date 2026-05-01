@@ -17,8 +17,7 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 Route::get('/dashboard/admin', [AdminController::class, 'dashboard'])->middleware('admin')->name('dashboard.admin');
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [AnnonceController::class, 'dashboard'])->name('dashboard');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+   Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/voitures/create', [VoitureController::class, 'create'])->name('voitures.create');
@@ -41,6 +40,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/emplois/{emploie}', [EmploieController::class, 'update'])->name('emplois.update');
     Route::delete('/emplois/{emploie}', [EmploieController::class, 'destroy'])->name('emplois.destroy');
 
+    Route::resource('annonces', AnnonceController::class);
+
 
 
 
@@ -48,7 +49,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/acceuil', [AnnonceController::class, 'index'])->name('acceuil');
 
-Route::resource('annonces', AnnonceController::class);
+
 Route::resource('categories', CategoriesController::class);
 Route::resource('attributs', AttributsController::class);
 Route::get('/home', [VoitureController::class, 'index'])->name('home');

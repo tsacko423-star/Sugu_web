@@ -3,13 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Annonces</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"><style></style></style>
 </head>
 <body>
-   
+   <form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button type="submit" class="btn btn-outline-danger d-flex align-items-center gap-2">
+        <i class="bi bi-box-arrow-right"></i>
+        Se déconnecter
+    </button>
+</form>
 <div class="container py-5">
     <h2 class="text-center mb-5">Publier une annonce</h2>
 

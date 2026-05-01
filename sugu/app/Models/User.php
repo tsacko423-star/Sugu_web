@@ -45,6 +45,20 @@ class User extends Authenticatable
 
     public function messagesRecus(){
           return $this->hasMany(Message::class, 'receiver_id');
-         }     
+         } 
+         
+          protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($user) {
+            if ($user->is_super_admin) 
+                 // enlever le super admin aux autres
+                {
+                self::where('id', '!=', $user->id)
+                    ->update(['is_super_admin' => false]);
+            }
+        });
+    }
 
 }

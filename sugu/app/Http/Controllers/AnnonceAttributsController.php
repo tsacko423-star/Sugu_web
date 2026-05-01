@@ -64,4 +64,6 @@ class AnnonceAttributsController extends Controller
         AnnonceAttribut::destroy($id);
         return back();
     }
+
+  
 }

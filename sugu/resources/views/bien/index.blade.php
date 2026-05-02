@@ -37,13 +37,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
 
-                @php
-                    $bienImage = $bien->image;
-                    $bienImageArray = json_decode($bienImage, true);
-                    $imagePath = is_array($bienImageArray) ? ($bienImageArray[0] ?? null) : $bienImage;
-                @endphp
-                @if($imagePath)
-                    <img src="{{ asset('storage/' . $imagePath) }}" 
+                @if($bien->image_url)
+                    <img src="{{ $bien->image_url }}" 
                          class="card-img-top"
                          alt="{{ $bien->titre }}">
                 @endif

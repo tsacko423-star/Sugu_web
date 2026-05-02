@@ -39,8 +39,8 @@
             @foreach($annonces as $annonce)
             <div class="col-md-6 col-lg-4">
                 <div class="card shadow-sm h-100">
-                    @if($annonce->image)
-                        <img src="{{ asset('storage/' . $annonce->image) }}" class="card-img-top" alt="{{ $annonce->titre }}" style="height: 200px; object-fit: cover;">
+                    @if(data_get($annonce, 'image_url'))
+                        <img src="{{ data_get($annonce, 'image_url') }}" class="card-img-top" alt="{{ $annonce->titre }}" style="height: 200px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
                             <i class="bi bi-{{ $annonce->type === 'emploi' ? 'briefcase' : ($annonce->type === 'voiture' ? 'car-front' : 'house') }}" style="font-size: 3rem; color: #6c757d;"></i>

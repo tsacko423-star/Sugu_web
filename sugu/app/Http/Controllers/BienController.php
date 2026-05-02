@@ -43,8 +43,9 @@ class BienController extends Controller
         ]);
 
         $paths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
+        $uploadedImages = $request->file('images') ?? $request->file('image');
+        if ($uploadedImages) {
+            foreach ($uploadedImages as $image) {
                 $paths[] = $image->store('biens', 'public');
             }
         }
@@ -96,9 +97,10 @@ class BienController extends Controller
             'prix' => $request->prix,
         ];
 
-        if ($request->hasFile('images')) {
+        $uploadedImages = $request->file('images') ?? $request->file('image');
+        if ($uploadedImages) {
             $paths = [];
-            foreach ($request->file('images') as $image) {
+            foreach ($uploadedImages as $image) {
                 $paths[] = $image->store('biens', 'public');
             }
             $data['image'] = json_encode($paths);

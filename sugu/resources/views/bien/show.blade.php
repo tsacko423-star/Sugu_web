@@ -16,8 +16,8 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-md-8">
-                    @if($bien->image)
-                        <img src="{{ asset('storage/' . $bien->image) }}" alt="{{ $bien->titre }}" class="img-fluid mb-3 rounded">
+                    @if($bien->image_url)
+                        <img src="{{ $bien->image_url }}" alt="{{ $bien->titre }}" class="img-fluid mb-3 rounded">
                     @endif
 
                     <h5 class="text-muted">Description</h5>

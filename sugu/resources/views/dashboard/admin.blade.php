@@ -54,8 +54,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm h-100">
 
-                @if($bien->image)
-                    <img src="{{ asset('storage/' . $bien->image) }}" class="card-img-top">
+                @if($bien->image_url)
+                    <img src="{{ $bien->image_url }}" class="card-img-top">
                 @endif
 
                 <div class="card-body d-flex flex-column">

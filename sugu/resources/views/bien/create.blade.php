@@ -39,7 +39,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Images</label>
-                <input type="file" name="image[]" class="form-control" multiple>
+                <input type="file" name="images[]" class="form-control" multiple>
                 <small class="text-muted">Vous pouvez sélectionner plusieurs images</small>
             </div>
 

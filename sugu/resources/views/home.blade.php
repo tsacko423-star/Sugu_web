@@ -146,8 +146,8 @@ footer {
 @foreach($biens as $bien)
 <div class="col-md-4">
     <div class="card">
-        @if($bien->image)
-            <img src="{{ asset('storage/' . $bien->image) }}" alt="{{ $bien->titre }}">
+        @if($bien->image_url)
+            <img src="{{ $bien->image_url }}" alt="{{ $bien->titre }}">
         @endif
         <div class="card-body">
             <h5>{{ $bien->titre }}</h5>

@@ -25,27 +25,28 @@
 
             <div class="mb-3">
                 <label class="form-label">Marque</label>
-                <input type="text" name="marque" class="form-control" placeholder="Ex: Toyota" required>
+                <input type="text" name="marque" value="{{ old('marque', $voiture->marque) }}" class="form-control" placeholder="Ex: Toyota" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Modèle</label>
-                <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
+                <input type="text" name="modele" value="{{ old('modele', $voiture->modele) }}" class="form-control" placeholder="Ex: Corolla" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Année</label>
-                <input type="number" name="annee" class="form-control" placeholder="Ex: 2020" required>
+                <input type="number" name="annee" value="{{ old('annee', $voiture->annee) }}" class="form-control" placeholder="Ex: 2020" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Prix</label>
-                <input type="number" name="prix" class="form-control" placeholder="Ex: 5000000" required>
+                <input type="number" name="prix" value="{{ old('prix', $voiture->prix) }}" class="form-control" placeholder="Ex: 5000000" required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Image</label>
-                <input type="file" name="image" class="form-control" required>
+                <input type="file" name="image" class="form-control">
+                <small class="text-muted">Laissez vide pour conserver l'image existante.</small>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Modifier</button>

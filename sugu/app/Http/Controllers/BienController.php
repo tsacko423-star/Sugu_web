@@ -38,23 +38,22 @@ class BienController extends Controller
     {
         $request->validate([
             'titre' => 'required|string|max:255',
-            'description' => 'required|string',
+            'ville' => 'required|string|max:255',
             'prix' => 'required|numeric',
         ]);
-          $paths = [];
 
-         if ($request->hasFile('images')) {
-         foreach ($request->file('images') as $image) {
-            $paths[] = $image->store('voitures', 'public');
-         }
-          }
+        $paths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $paths[] = $image->store('biens', 'public');
+            }
+        }
 
         Bien::create([
             'titre' => $request->titre,
-            'description' => $request->description,
+            'ville' => $request->ville,
             'prix' => $request->prix,
-            'image' => json_encode($paths),
-            'numero' => $request->numero,
+            'image' => $paths ? json_encode($paths) : null,
             'user_id' => Auth::id(),
         ]);
 
@@ -82,20 +81,30 @@ class BienController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {        $bien = Bien::findOrFail($id);
+    {
+        $bien = Bien::findOrFail($id);
 
         $request->validate([
             'titre' => 'required|string|max:255',
-            'description' => 'required|string',
+            'ville' => 'required|string|max:255',
             'prix' => 'required|numeric',
         ]);
 
-        $bien->update([
+        $data = [
             'titre' => $request->titre,
-            'description' => $request->description,
+            'ville' => $request->ville,
             'prix' => $request->prix,
-            'numero' => $request->numero,
-        ]);
+        ];
+
+        if ($request->hasFile('images')) {
+            $paths = [];
+            foreach ($request->file('images') as $image) {
+                $paths[] = $image->store('biens', 'public');
+            }
+            $data['image'] = json_encode($paths);
+        }
+
+        $bien->update($data);
 
         return redirect()->route('home')
             ->with('success', 'Bien mis à jour avec succès');

@@ -62,11 +62,11 @@
                     <h5>{{ $bien->titre }}</h5>
                     <p><strong>{{ $bien->prix }} FCFA</strong><br>{{ $bien->ville }}</p>
 
-                    <a href="{{ route('bien.edit', $bien->id) }}" class="btn btn-warning w-100 mb-2">
+                    <a href="{{ route('biens.edit', $bien->id) }}" class="btn btn-warning w-100 mb-2">
                         Modifier
                     </a>
 
-                    <form action="{{ route('bien.destroy', $bien->id) }}" method="POST">
+                    <form action="{{ route('biens.destroy', $bien->id) }}" method="POST">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-danger w-100">Supprimer</button>

@@ -43,8 +43,9 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Image</label>
-                <input type="file" name="image" class="form-control" required>
+                <label class="form-label">Image (optionnel)</label>
+                <input type="file" name="image" class="form-control">
+                <div class="form-text">Formats acceptés: JPG, JPEG, PNG. Taille max: 2MB</div>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Ajouter</button>

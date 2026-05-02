@@ -19,17 +19,17 @@
             </div>
         @endif
 
-        <form method="POST" enctype="multipart/form-data" action="{{ route('bien.store') }}">
+        <form method="POST" enctype="multipart/form-data" action="{{ route('biens.store') }}">
             @csrf
 
             <div class="mb-3">
-                <label class="form-label">Type</label>
-                <input type="text" name="type" class="form-control" placeholder="Ex: Maison, Terrain..." required>
+                <label class="form-label">Titre</label>
+                <input type="text" name="titre" value="{{ old('titre') }}" class="form-control" placeholder="Ex: Maison, Terrain..." required>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Ville</label>
-                <input type="text" name="ville" class="form-control" placeholder="Ex: Bamako" required>
+                <input type="text" name="ville" value="{{ old('ville') }}" class="form-control" placeholder="Ex: Bamako" required>
             </div>
 
             <div class="mb-3">

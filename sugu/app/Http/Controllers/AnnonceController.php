@@ -18,7 +18,54 @@ class AnnonceController extends Controller
      */
     public function index()
     {
-         $annonces = Annonce::with('user', 'categorie')->get();
+        // Récupérer toutes les annonces de toutes les catégories
+        $biens = Bien::with('user')->get()->map(function($bien) {
+            return (object) [
+                'id' => $bien->id,
+                'titre' => $bien->titre,
+                'description' => $bien->description,
+                'prix' => $bien->prix,
+                'image' => $bien->image,
+                'created_at' => $bien->created_at,
+                'user' => $bien->user,
+                'type' => 'immobilier',
+                'route_prefix' => 'biens'
+            ];
+        });
+
+        $voitures = Voiture::with('user')->get()->map(function($voiture) {
+            return (object) [
+                'id' => $voiture->id,
+                'titre' => $voiture->marque . ' ' . $voiture->modele,
+                'description' => 'Voiture ' . $voiture->marque . ' ' . $voiture->modele . ' - ' . $voiture->annee,
+                'prix' => $voiture->prix,
+                'image' => $voiture->image,
+                'created_at' => $voiture->created_at,
+                'user' => $voiture->user,
+                'type' => 'voiture',
+                'route_prefix' => 'voitures'
+            ];
+        });
+
+        $emplois = Emploi::with('user')->get()->map(function($emploi) {
+            return (object) [
+                'id' => $emploi->id,
+                'titre' => $emploi->titre,
+                'description' => $emploi->description,
+                'prix' => $emploi->salaire,
+                'image' => null,
+                'created_at' => $emploi->created_at,
+                'user' => $emploi->user,
+                'type' => 'emploi',
+                'route_prefix' => 'emplois'
+            ];
+        });
+
+        // Fusionner toutes les annonces et trier par date de création
+        $annonces = collect([...$biens, ...$voitures, ...$emplois])
+            ->sortByDesc('created_at')
+            ->values();
+
         return view('annonces.index', compact('annonces'));
     }
 
@@ -36,6 +83,13 @@ class AnnonceController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'titre' => 'required|string|max:255',
+            'description' => 'required|string',
+            'prix' => 'required|numeric|min:0',
+            'categorie_id' => 'required|exists:categories,id',
+        ]);
+
          $annonce = Annonce::create([
             'titre' => $request->titre,
             'description' => $request->description,
@@ -54,7 +108,7 @@ class AnnonceController extends Controller
             }
         }
 
-        return redirect()->route('annonces.index');
+        return redirect()->route('annonces.index')->with('success', 'Annonce créée avec succès !');
     }
 
     /**
@@ -72,7 +126,8 @@ class AnnonceController extends Controller
     public function edit(string $id)
     {
        $annonce = Annonce::findOrFail($id);
-        return view('annonces.edit', compact('annonce'));
+       $categories = Categorie::all();
+        return view('annonces.edit', compact('annonce', 'categories'));
     }
 
     /**
@@ -80,9 +135,16 @@ class AnnonceController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $request->validate([
+            'titre' => 'required|string|max:255',
+            'description' => 'required|string',
+            'prix' => 'required|numeric|min:0',
+            'categorie_id' => 'required|exists:categories,id',
+        ]);
+
         $annonce = Annonce::findOrFail($id);
-        $annonce->update($request->all());
-        return redirect()->route('annonces.index');
+        $annonce->update($request->only(['titre', 'description', 'prix', 'categorie_id']));
+        return redirect()->route('annonces.index')->with('success', 'Annonce modifiée avec succès !');
     }
 
     /**

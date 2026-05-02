@@ -8,9 +8,9 @@ class Emploi extends Model
 {
     protected $fillable = [
         'titre',
+        'ville',
         'description',
         'salaire',
-        'image', 
         'user_id',
     ];
     public function user()

@@ -24,11 +24,14 @@ class VoitureController extends Controller
             'modele' => 'required|string|max:255',
             'annee' => 'required|integer',
             'prix' => 'required|numeric',
-            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048'
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        // Upload image
-        $imagePath = $request->file('image')->store('voitures', 'public');
+        // Upload image si fournie
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('voitures', 'public');
+        }
 
         // Création
         Voiture::create([
@@ -37,7 +40,7 @@ class VoitureController extends Controller
             'annee' => $request->annee,
             'prix' => $request->prix,
             'image' => $imagePath,
-            'user_id' => Auth::id() 
+            'user_id' => Auth::id()
         ]);
 
         // Redirection vers page publique
@@ -79,19 +82,19 @@ class VoitureController extends Controller
             'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
-        // Upload new image if provided
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('voitures', 'public');
-            $voiture->image = $imagePath;
-        }
-
-        // Mise à jour
-        $voiture->update([
+        // Mise à jour des champs
+        $data = [
             'marque' => $request->marque,
             'modele' => $request->modele,
             'annee' => $request->annee,
             'prix' => $request->prix,
-        ]);
+        ];
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('voitures', 'public');
+        }
+
+        $voiture->update($data);
 
         // Redirection vers page publique
         return redirect()->route('home')

@@ -10,23 +10,17 @@
 <body class="bg-light">
 
 <div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1>Liste des annonces</h1>
-            <p class="text-muted mb-0">Ajouter directement une nouvelle annonce par type.</p>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1>Liste des annonces</h1>
+                <p class="text-muted mb-0">Ajouter directement une nouvelle annonce.</p>
+            </div>
+            <div>
+                <a href="{{ route('annonces.create') }}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Créer une annonce
+                </a>
+            </div>
         </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('voitures.create') }}" class="btn btn-success">
-                <i class="bi bi-car-front"></i> Créer voiture
-            </a>
-            <a href="{{ route('biens.create') }}" class="btn btn-warning">
-                <i class="bi bi-house"></i> Créer immobilier
-            </a>
-            <a href="{{ route('emplois.create') }}" class="btn btn-info text-white">
-                <i class="bi bi-briefcase"></i> Créer emploi
-            </a>
-        </div>
-    </div>
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -43,7 +37,8 @@
                         <img src="{{ data_get($annonce, 'image_url') }}" class="card-img-top" alt="{{ $annonce->titre }}" style="height: 200px; object-fit: cover;">
                     @else
                         <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                            <i class="bi bi-{{ $annonce->type === 'emploi' ? 'briefcase' : ($annonce->type === 'voiture' ? 'car-front' : 'house') }}" style="font-size: 3rem; color: #6c757d;"></i>
+                            @php $categorieName = strtolower($annonce->categorie->name ?? 'autre'); @endphp
+                            <i class="bi bi-{{ $categorieName === 'emploi' ? 'briefcase' : ($categorieName === 'voiture' ? 'car-front' : 'house') }}" style="font-size: 3rem; color: #6c757d;"></i>
                         </div>
                     @endif
                     <div class="card-body d-flex flex-column">
@@ -55,18 +50,9 @@
                             <p class="h5 text-primary mb-2">{{ number_format($annonce->prix, 0, ',', ' ') }} FCFA</p>
 
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <span class="badge bg-secondary">{{ ucfirst($annonce->type) }}</span>
-                                <small class="text-muted">{{ $annonce->created_at->diffForHumans() }}</small>
-                            </div>
-
-                            <div class="d-flex gap-2">
-                                <a href="{{ route($annonce->route_prefix . '.show', $annonce->id) }}" class="btn btn-outline-primary btn-sm">
-                                    <i class="bi bi-eye"></i> Voir
+                                <span class="badge bg-secondary">{{ ucfirst($annonce->categorie->name ?? 'Annonce') }}</span>
                                 </a>
-                                <a href="{{ route($annonce->route_prefix . '.edit', $annonce->id) }}" class="btn btn-outline-warning btn-sm">
-                                    <i class="bi bi-pencil"></i> Modifier
-                                </a>
-                                <form action="{{ route($annonce->route_prefix . '.destroy', $annonce->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">
+                                <form action="{{ route('annonces.destroy', $annonce->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm">

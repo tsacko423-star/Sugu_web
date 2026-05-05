@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AnnonceAttribut;
 use Illuminate\Http\Request;
 
 class AnnonceAttributsController extends Controller

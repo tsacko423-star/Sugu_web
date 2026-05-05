@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AnnonceAttributsController;
 use App\Http\Controllers\AnnonceController;
 use App\Http\Controllers\AttributsController;
 use App\Http\Controllers\BienController;
@@ -40,5 +41,6 @@ Route::get('/home', [VoitureController::class, 'index'])->name('home');
 Route::post('/message/send', [MessagesController::class, 'send']);
 Route::get('/messages/inbox', [MessagesController::class, 'inbox']);
 Route::get('/messages/sent', [MessagesController::class, 'sent']);
+Route::resource('annonce-attributs', AnnonceAttributsController::class);
 
 require __DIR__.'/auth.php';

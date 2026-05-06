@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Annonce;
 use App\Models\AnnonceAttribut;
+use App\Models\Attribut;
 use App\Models\Categorie;
 use App\Models\User;
 use App\Models\Bien;
@@ -75,7 +76,8 @@ class AnnonceController extends Controller
     public function create()
     {
          $categories = Categorie::all();
-        return view('annonces.create', compact('categories'));
+         $attributs = Attribut::all();
+        return view('annonces.create', compact('categories', 'attributs'));
     }
 
     /**
@@ -88,6 +90,9 @@ class AnnonceController extends Controller
             'description' => 'required|string',
             'prix' => 'required|numeric|min:0',
             'categorie_id' => 'required|exists:categories,id',
+            'attributs' => 'nullable|array',
+            'attributs.*.id' => 'required|exists:attributs,id',
+            'attributs.*.valeur' => 'required|string|max:255',
         ]);
 
          $annonce = Annonce::create([
@@ -97,14 +102,16 @@ class AnnonceController extends Controller
             'user_id' => Auth::id(),
             'categorie_id' => $request->categorie_id,
         ]);
-          // ajouter attributs dynamiques
-        if($request->attributs){
-            foreach($request->attributs as $key => $value){
-                AnnonceAttribut::create([
-                    'annonce_id' => $annonce->id,
-                    'nom' => $key,
-                    'valeur' => $value,
-                ]);
+
+        if ($request->filled('attributs')) {
+            foreach ($request->attributs as $attributData) {
+                if (!empty($attributData['id']) && isset($attributData['valeur'])) {
+                    AnnonceAttribut::create([
+                        'annonce_id' => $annonce->id,
+                        'attribut_id' => $attributData['id'],
+                        'valeur' => $attributData['valeur'],
+                    ]);
+                }
             }
         }
 
@@ -116,7 +123,7 @@ class AnnonceController extends Controller
      */
     public function show(string $id)
     {
-        $annonce = Annonce::with('user', 'categorie')->findOrFail($id);
+        $annonce = Annonce::with(['user', 'categorie', 'attributs.attribut'])->findOrFail($id);
         return view('annonces.show', compact('annonce'));
     }
 

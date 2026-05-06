@@ -47,6 +47,12 @@ class CategoriesController extends Controller
         //
     }
 
+    public function getAttributes($id)
+{
+    $category = Categorie::with('attributes.values')->find($id);
+
+    return response()->json($category->attributes);
+}
     /**
      * Show the form for editing the specified resource.
      */

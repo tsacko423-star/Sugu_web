@@ -17,7 +17,7 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
 Route::get('/dashboard/admin', [AdminController::class, 'dashboard'])->middleware('admin')->name('dashboard.admin');
 Route::middleware('auth')->group(function () {
-   Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('voitures', VoitureController::class);
@@ -25,14 +25,10 @@ Route::middleware('auth')->group(function () {
     Route::resource('biens', BienController::class);
 
     Route::resource('annonces', AnnonceController::class);
-
-
-
-
-    });
+});
 
 Route::get('/acceuil', [AnnonceController::class, 'index'])->name('acceuil');
-
+Route::get('/categories/{id}/attributes', [CategoriesController::class, 'getAttributes']);
 
 Route::resource('categories', CategoriesController::class);
 Route::resource('attributs', AttributsController::class);
@@ -41,4 +37,4 @@ Route::post('/message/send', [MessagesController::class, 'send']);
 Route::get('/messages/inbox', [MessagesController::class, 'inbox']);
 Route::get('/messages/sent', [MessagesController::class, 'sent']);
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

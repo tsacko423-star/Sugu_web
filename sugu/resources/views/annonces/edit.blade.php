@@ -59,6 +59,20 @@
                 <input type="number" name="prix" value="{{ old('prix', $annonce->prix) }}" class="form-control" step="0.01" placeholder="Prix en FCFA" required>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Attributs supplémentaires</label>
+                <div id="attributs-container">
+                    @foreach($annonce->annonceAttributs as $attribut)
+                    <div class="input-group mb-2">
+                        <input type="text" name="attributs[nom][]" value="{{ $attribut->nom }}" class="form-control" placeholder="Nom de l'attribut" required>
+                        <input type="text" name="attributs[valeur][]" value="{{ $attribut->valeur }}" class="form-control" placeholder="Valeur" required>
+                        <button type="button" class="btn btn-danger remove-attribut">Supprimer</button>
+                    </div>
+                    @endforeach
+                </div>
+                <button type="button" class="btn btn-secondary mt-2" id="add-attribut">Ajouter un attribut</button>
+            </div>
+
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-primary">Modifier l'annonce</button>
                 <a href="{{ route('annonces.index') }}" class="btn btn-secondary">Annuler</a>
@@ -68,6 +82,25 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.getElementById('add-attribut').addEventListener('click', function() {
+        const container = document.getElementById('attributs-container');
+        const div = document.createElement('div');
+        div.className = 'input-group mb-2';
+        div.innerHTML = `
+            <input type="text" name="attributs[nom][]" class="form-control" placeholder="Nom de l'attribut" required>
+            <input type="text" name="attributs[valeur][]" class="form-control" placeholder="Valeur" required>
+            <button type="button" class="btn btn-danger remove-attribut">Supprimer</button>
+        `;
+        container.appendChild(div);
+    });
+
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-attribut')) {
+            e.target.parentElement.remove();
+        }
+    });
+</script>
 
 </body>
 </html>

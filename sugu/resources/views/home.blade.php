@@ -113,9 +113,9 @@ footer {
 </button><div class="collapse navbar-collapse" id="menu">
 <ul class="navbar-nav ms-auto">
 <li class="nav-item"><a class="nav-link" href="#">Accueil</a></li>
-<li class="nav-item"><a class="nav-link" href="#immobilier">Immobilier</a></li>
-<li class="nav-item"><a class="nav-link" href="#voitures">Voitures</a></li>
-<li class="nav-item"><a class="nav-link" href="#emploi">Emplois</a></li>
+@foreach($categories as $category)
+<li class="nav-item"><a class="nav-link" href="#{{ strtolower($category->name) }}">{{ $category->name }}</a></li>
+@endforeach
 <div class="dropdown">
   <button class="btn btn-dark rounded-circle" type="button" data-bs-toggle="dropdown">
     <i class="bi bi-person"></i>

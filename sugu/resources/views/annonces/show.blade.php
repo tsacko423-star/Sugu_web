@@ -25,6 +25,17 @@
                     <h5 class="text-muted mt-4">Catégorie</h5>
                     <p><span class="badge bg-secondary">{{ $annonce->categorie->name }}</span></p>
 
+                    @if($annonce->annonceAttributs->count() > 0)
+                    <h5 class="text-muted mt-4">Attributs</h5>
+                    <ul class="list-group list-group-flush">
+                        @foreach($annonce->annonceAttributs as $attribut)
+                        <li class="list-group-item d-flex justify-content-between">
+                            <strong>{{ $attribut->nom }}:</strong> {{ $attribut->valeur }}
+                        </li>
+                        @endforeach
+                    </ul>
+                    @endif
+
                     <h5 class="text-muted mt-4">Publié par</h5>
                     <p>{{ $annonce->user->name }}</p>
 

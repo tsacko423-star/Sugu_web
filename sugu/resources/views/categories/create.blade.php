@@ -7,9 +7,10 @@
                     @csrf
                    
                     <div class="form-control w-full">
-                        <input type="text" name="name" class="input input-bordered w-full" />
+                        <input type="text" name="name" class="input input-bordered w-full" placeholder="Nom de la catégorie" required />
                     </div>
                     <br>
+                    
 
                     <div class="mt-4 flex items-center justify-end">
                        <button class="btn btn-primary" type="submit" data-bs-toggle="collapse"  aria-expanded="false" >

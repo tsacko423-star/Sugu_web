@@ -20,8 +20,17 @@
                     <td>{{ $categorie->id }}</td>
                     <td>{{ $categorie->name }}</td>
                     <td>
-                    <a href="#" class="btn btn-primary">modifier</a>
-                    <a href="#" class="btn btn-danger">supprimer</a>
+                    <a href="{{ route('categories.edit', $categorie->id) }}" class="btn btn-warning w-100 mb-2">
+                            Modifier
+                        </a>
+                    <form action="{{ route('categories.destroy', $categorie->id) }}" method="POST">
+    @csrf
+    @method('DELETE')
+
+    <button type="submit" class="btn btn-danger w-100 mb-2">
+        Supprimer
+    </button>
+</form>
                     </td>
                 </tr> 
             @endforeach      

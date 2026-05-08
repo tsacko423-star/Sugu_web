@@ -32,6 +32,7 @@ class CategoriesController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
         ]);
 
         Categorie::create($validated);
@@ -66,6 +67,7 @@ class CategoriesController extends Controller
         //
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'icon' => 'nullable|string|max:255',
         ]); 
         $category = Categorie::findOrFail($id);
         $category->update($validated);
@@ -75,9 +77,12 @@ class CategoriesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-          Categorie::destroy($id);
-        return back();
-    }
+   public function destroy(string $id)
+{
+    $categorie = Categorie::findOrFail($id);
+    $categorie->delete();
+
+    return redirect()->route('categories.index')
+        ->with('success', 'Catégorie supprimée avec succès');
+}
 }

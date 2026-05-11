@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/acceuil', [AnnonceController::class, 'index'])->name('acceuil');
+Route::get('/search', [AnnonceController::class, 'search'])->name('search');
+Route::get('/categorie/{id}', [AnnonceController::class, 'category'])->name('categories.show');
 
 Route::middleware('auth')->group(function () {
     // User Dashboard
@@ -26,6 +28,9 @@ Route::middleware('auth')->group(function () {
 
     // Annonces
     Route::resource('annonces', AnnonceController::class);
+
+    // Voitures
+    Route::resource('voitures', VoitureController::class);
     
     // Messages
     Route::post('/message/send', [MessagesController::class, 'send']);
@@ -43,6 +48,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('/categories/{id}', [CategoriesController::class, 'destroy'])->name('categories.destroy');
 });
 
-Route::get('/home', [VoitureController::class, 'index'])->name('home');
+Route::redirect('/categories', '/admin/categories');
+
+Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 require __DIR__.'/auth.php';

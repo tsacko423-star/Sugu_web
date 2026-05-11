@@ -1,28 +1,36 @@
-<x-app-layout>
-    <h1>
-        Modifier une catégorie
-    </h1>
-     <form method="POST" action="{{ route('categories.update', $category->id) }}">
-                    @csrf
-                    @method('PUT')
-                   
-                    <div class="form-control w-full">
-                        <input type="text" name="name" value="{{ $category->name }}" class="input input-bordered w-full" placeholder="Nom de la catégorie" required />
-                    </div>
-                    <br>
-                    <div class="form-control w-full">
-                        <input type="text" name="icon" value="{{ $category->icon }}" class="input input-bordered w-full" placeholder="Icône Bootstrap (ex: house, car-front)" />
-                    </div>
-                    <br>
+@extends('layouts.app')
 
-                    <div class="mt-4 flex items-center justify-end">
-                       <button class="btn btn-primary" type="submit" data-bs-toggle="collapse"  aria-expanded="false" >
-                            Modifier
-                        </button> <br>
-                    </div>
-                    <br>
-                        <a href="{{ route('categories.index') }}" class="btn btn-danger" type="button" data-bs-toggle="collapse"  aria-expanded="false" >
-                            Liste des categories
-                        </a> 
-                </form>
-</x-app-layout>
+@section('content')
+<div class="container py-5 mt-5">
+    <div class="card p-4">
+        <div class="mb-4">
+            <h1 class="h3">Modifier une catégorie</h1>
+            <p class="text-secondary">Mettez à jour le nom et l’icône de la catégorie.</p>
+        </div>
+
+        <form method="POST" action="{{ route('categories.update', $category->id) }}">
+            @csrf
+            @method('PUT')
+
+            <div class="mb-3">
+                <label class="form-label">Nom de la catégorie</label>
+                <input type="text" name="name" value="{{ $category->name }}" class="form-control" placeholder="Nom de la catégorie" required />
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Icône Bootstrap</label>
+                <input type="text" name="icon" value="{{ $category->icon }}" class="form-control" placeholder="Ex: house, car-front" />
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <button class="btn btn-luxe" type="submit">
+                    Modifier
+                </button>
+                <a href="{{ route('categories.index') }}" class="btn btn-outline-dark">
+                    Liste des catégories
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+@endsection

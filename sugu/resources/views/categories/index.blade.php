@@ -1,40 +1,49 @@
+@extends('layouts.app')
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <h1>
-        Liste des categories
-    </h1>
-    <a href="{{ route('categories.create') }}" class="btn btn-primary">
-        Ajouter une categorie
-    </a>
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nom</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($categories as $categorie )
-                <tr>
-                    <td>{{ $categorie->id }}</td>
-                    <td>{{ $categorie->name }}</td>
-                    <td>
-                    <a href="{{ route('categories.edit', $categorie->id) }}" class="btn btn-warning w-100 mb-2">
-                            Modifier
-                        </a>
-                    <form action="{{ route('categories.destroy', $categorie->id) }}" method="POST">
-    @csrf
-    @method('DELETE')
+@section('content')
+<div class="container py-5 mt-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+        <div>
+            <h1 class="display-6">Liste des catégories</h1>
+            <p class="text-secondary">Gérez les catégories de votre marketplace depuis l’espace admin.</p>
+        </div>
+        <a href="{{ route('categories.create') }}" class="btn btn-luxe">
+            <i class="bi bi-plus-circle me-2"></i>Ajouter une catégorie
+        </a>
+    </div>
 
-    <button type="submit" class="btn btn-danger w-100 mb-2">
-        Supprimer
-    </button>
-</form>
-                    </td>
-                </tr> 
-            @endforeach      
-        </tbody>
-      
-    </table>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-dark table-striped align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nom</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($categories as $categorie)
+                        <tr>
+                            <td>{{ $categorie->id }}</td>
+                            <td>{{ $categorie->name }}</td>
+                            <td class="d-flex flex-column gap-2">
+                                <a href="{{ route('categories.edit', $categorie->id) }}" class="btn btn-outline-dark w-100">
+                                    Modifier
+                                </a>
+                                <form action="{{ route('categories.destroy', $categorie->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger w-100">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endsection

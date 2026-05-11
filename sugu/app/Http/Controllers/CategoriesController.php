@@ -37,7 +37,7 @@ class CategoriesController extends Controller
 
         Categorie::create($validated);
 
-        return redirect('/categories')->with('success', 'Category created successfully.');
+        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 
     /**
@@ -71,7 +71,7 @@ class CategoriesController extends Controller
         ]); 
         $category = Categorie::findOrFail($id);
         $category->update($validated);
-        return redirect('/categories')->with('success', 'Category updated successfully.');
+        return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
     /**

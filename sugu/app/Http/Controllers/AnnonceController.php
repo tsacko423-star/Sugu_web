@@ -6,6 +6,7 @@ use App\Models\AnnonceAttribut;
 use App\Models\Categorie;
 use App\Http\Requests\StoreAnnonceRequest;
 use App\Http\Requests\UpdateAnnonceRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -17,6 +18,37 @@ class AnnonceController extends Controller
     public function index()
     {
         $annonces = Annonce::with('user', 'categorie')
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('annonces.index', compact('annonces'));
+    }
+
+    public function search(Request $request)
+    {
+        $query = trim($request->query('q', ''));
+
+        $annonces = Annonce::with('user', 'categorie')
+            ->when($query, function ($builder, $value) {
+                $builder->where(function ($sub) use ($value) {
+                    $sub->where('titre', 'like', "%{$value}%")
+                        ->orWhere('description', 'like', "%{$value}%")
+                        ->orWhereHas('categorie', function ($q) use ($value) {
+                            $q->where('name', 'like', "%{$value}%");
+                        });
+                });
+            })
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('annonces.index', compact('annonces'));
+    }
+
+    public function category(string $id)
+    {
+        $categorie = Categorie::findOrFail($id);
+        $annonces = Annonce::with('user', 'categorie')
+            ->where('categorie_id', $id)
             ->orderByDesc('created_at')
             ->get();
 

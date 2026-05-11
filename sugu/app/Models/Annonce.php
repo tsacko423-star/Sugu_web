@@ -6,7 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Annonce extends Model
 {
-    protected $fillable = ['titre', 'description', 'prix', 'user_id', 'categorie_id'];
+    protected $fillable = ['titre', 'description', 'prix', 'user_id', 'categorie_id', 'images'];
+
+    protected $casts = [
+        'images' => 'array',
+    ];
 
     public function user()
     {
@@ -19,6 +23,10 @@ class Annonce extends Model
     }
 
     public function attributs()
+    {
+        return $this->hasMany(AnnonceAttribut::class);
+    }
+    public function annonceAttributs()
     {
         return $this->hasMany(AnnonceAttribut::class);
     }

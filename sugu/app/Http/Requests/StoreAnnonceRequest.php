@@ -27,6 +27,8 @@ class StoreAnnonceRequest extends FormRequest
             'description' => 'required|string',
             'prix' => 'required|numeric|min:0',
             'categorie_id' => 'required|exists:categories,id',
+            'images' => 'required|array|max:5',
+            'images.*' => 'image|mimes:jpeg,png,webp,jpg|max:5120',
             'attributs' => 'nullable|array',
             'attributs.nom' => 'nullable|array',
             'attributs.nom.*' => 'string|max:255',

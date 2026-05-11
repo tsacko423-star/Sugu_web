@@ -7,6 +7,7 @@ use App\Models\Categorie;
 use App\Http\Requests\StoreAnnonceRequest;
 use App\Http\Requests\UpdateAnnonceRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AnnonceController extends Controller
 {
@@ -36,14 +37,26 @@ class AnnonceController extends Controller
      */
     public function store(StoreAnnonceRequest $request)
     {
-         $annonce = Annonce::create([
+        $imagePaths = [];
+        
+        // Handle image uploads
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('annonces', 'public');
+                $imagePaths[] = $path;
+            }
+        }
+        
+        $annonce = Annonce::create([
             'titre' => $request->titre,
             'description' => $request->description,
             'prix' => $request->prix,
             'user_id' => Auth::id(),
             'categorie_id' => $request->categorie_id,
+            'images' => $imagePaths,
         ]);
-          // ajouter attributs dynamiques
+        
+        // ajouter attributs dynamiques
         if($request->attributs && isset($request->attributs['nom'])){
             foreach($request->attributs['nom'] as $index => $nom){
                 $valeur = $request->attributs['valeur'][$index] ?? '';
@@ -85,7 +98,24 @@ class AnnonceController extends Controller
     public function update(UpdateAnnonceRequest $request, string $id)
     {
         $annonce = Annonce::findOrFail($id);
-        $annonce->update($request->only(['titre', 'description', 'prix', 'categorie_id']));
+        
+        $imagePaths = $annonce->images ?? [];
+        
+        // Handle new image uploads
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('annonces', 'public');
+                $imagePaths[] = $path;
+            }
+        }
+        
+        $annonce->update([
+            'titre' => $request->titre,
+            'description' => $request->description,
+            'prix' => $request->prix,
+            'categorie_id' => $request->categorie_id,
+            'images' => $imagePaths,
+        ]);
 
         // Supprimer les anciens attributs
         $annonce->annonceAttributs()->delete();
@@ -112,7 +142,16 @@ class AnnonceController extends Controller
      */
     public function destroy(string $id)
     {
-        Annonce::destroy($id);
+        $annonce = Annonce::findOrFail($id);
+        
+        // Delete images
+        if ($annonce->images) {
+            foreach ($annonce->images as $image) {
+                Storage::disk('public')->delete($image);
+            }
+        }
+        
+        $annonce->delete();
         return back();
     }
 

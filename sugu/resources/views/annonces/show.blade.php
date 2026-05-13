@@ -38,13 +38,53 @@
                 </div>
                 <div class="col-md-4">
                     <div class="d-grid gap-3">
-                        <a href="{{ route('annonces.edit', $annonce->id) }}" class="btn btn-luxe">Modifier</a>
+                        @auth
+                            @if(auth()->id() === $annonce->user_id)
+                                <a href="{{ route('annonces.edit', $annonce->id) }}" class="btn btn-luxe">Modifier</a>
 
-                        <form action="{{ route('annonces.destroy', $annonce->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-outline-dark w-100">Supprimer</button>
-                        </form>
+                                <form action="{{ route('annonces.destroy', $annonce->id) }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette annonce ?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-outline-dark w-100">Supprimer</button>
+                                </form>
+                            @else
+                                <!-- Contact form for authenticated users -->
+                                <div class="card">
+                                    <div class="card-header">Contacter le vendeur</div>
+                                    <div class="card-body">
+                                        <form action="{{ route('message.send') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="receiver_id" value="{{ $annonce->user_id }}">
+                                            <div class="mb-3">
+                                                <textarea name="contenu" class="form-control" rows="3" placeholder="Votre message..." required></textarea>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            @endif
+                        @else
+                            <!-- Contact form for visitors -->
+                            <div class="card">
+                                <div class="card-header">Contacter le vendeur</div>
+                                <div class="card-body">
+                                    <form action="{{ route('message.send') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="receiver_id" value="{{ $annonce->user_id }}">
+                                        <div class="mb-3">
+                                            <input type="text" name="sender_name" class="form-control" placeholder="Votre nom" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="email" name="sender_email" class="form-control" placeholder="Votre email" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <textarea name="contenu" class="form-control" rows="3" placeholder="Votre message..." required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endauth
 
                         <a href="{{ route('annonces.index') }}" class="btn btn-outline-dark w-100">Retour à la liste</a>
                     </div>

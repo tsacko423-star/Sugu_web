@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class MessagesController extends Controller
@@ -31,15 +32,33 @@ class MessagesController extends Controller
         //
     }
 
-    public function send(Request $request)
+    public function sendToAdmin(Request $request)
     {
-        Message::create([
-            'contenu' => $request->contenu,
-            'sender_id' => auth()->id(),
-            'receiver_id' => $request->receiver_id,
-             ]);
+        $request->validate([
+            'contenu' => 'required|string',
+        ]);
 
-        return back();
+        $admin = User::where('role', 'admin')->first();
+
+        if (!$admin) {
+            return back()->with('error', 'Aucun administrateur trouvé.');
+        }
+
+        $data = [
+            'contenu' => $request->contenu,
+            'receiver_id' => $admin->id,
+        ];
+
+        if (auth()->check()) {
+            $data['sender_id'] = auth()->id();
+        } else {
+            $data['sender_name'] = $request->sender_name;
+            $data['sender_email'] = $request->sender_email;
+        }
+
+        Message::create($data);
+
+        return back()->with('success', 'Message envoyé à l\'administrateur avec succès.');
     }
 
     public function inbox()

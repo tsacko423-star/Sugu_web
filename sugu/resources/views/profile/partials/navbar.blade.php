@@ -46,11 +46,43 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ route('annonces.index') }}">Annonces</a>
                 </li>
+                @auth
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactAdminModal">Contacter Admin</a>
+                    </li>
+                @endauth
             </ul>
 
            
         </div>
     </div>
 </nav>
+
+<!-- Contact Admin Modal -->
+@auth
+<div class="modal fade" id="contactAdminModal" tabindex="-1" aria-labelledby="contactAdminModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactAdminModalLabel">Contacter l'Administrateur</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="{{ route('message.send-to-admin') }}" method="POST">
+                @csrf
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="contenu" class="form-label">Votre message</label>
+                        <textarea name="contenu" class="form-control" id="contenu" rows="4" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Envoyer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@endauth
 
 

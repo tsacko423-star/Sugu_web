@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('voitures', VoitureController::class);
     
     // Messages
-    Route::post('/message/send', [MessagesController::class, 'send']);
+    Route::post('/message/send-to-admin', [MessagesController::class, 'sendToAdmin']);
     Route::get('/messages/inbox', [MessagesController::class, 'inbox']);
     Route::get('/messages/sent', [MessagesController::class, 'sent']);
     
@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('attributs', AttributsController::class);
     Route::resource('annonce-attributs', AnnonceAttributsController::class);
 });
+
+// Messages (public for contacting about ads)
+Route::post('/message/send', [MessagesController::class, 'send']);
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');

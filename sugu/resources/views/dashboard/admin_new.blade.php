@@ -134,7 +134,7 @@
                                     </div>
                                 </td>
                                 <td><span class="badge-status pending">{{ $annonce->categorie->name ?? 'Non classé' }}</span></td>
-                                <td class="fw-semibold">{{ number_format($annonce->prix ?? 0, 0, ',', ' ') }}€</td>
+                                <td class="fw-semibold">{{ number_format($annonce->prix ?? 0, 0, ',', ' ') }}FCFA</td>
                                 <td>
                                     <span class="badge-status {{ ($annonce->status ?? 'pending') === 'active' ? 'active' : (($annonce->status ?? 'pending') === 'pending' ? 'pending' : 'inactive') }}">
                                         {{ ucfirst($annonce->status ?? 'pending') }}

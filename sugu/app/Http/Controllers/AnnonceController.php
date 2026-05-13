@@ -17,7 +17,7 @@ class AnnonceController extends Controller
      */
     public function index()
     {
-        $annonces = Annonce::with('user', 'categorie')
+        $annonces = Annonce::with('categorie')
             ->orderByDesc('created_at')
             ->get();
 

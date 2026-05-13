@@ -18,8 +18,25 @@
     <body class="font-sans text-gray-100 antialiased bg-primary-bg">
         <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
             <div>
-                <a href="{{ route('home') }}" class="navbar-brand text-white fw-bold">Sugu Web</a>
+                <a href="{{ route('home') }}" class="navbar-brand text-white fw-bold">SugWeb</a>   
             </div>
+            {{-- Icônes de droite --}}
+            <div class="d-flex align-items-center gap-3 flex-wrap py-3 py-lg-0">
+                {{-- Icône : Publier une annonce --}}
+                <a href="{{ route('annonces.create') }}"
+                   title="Publier une annonce"
+                   class="d-flex align-items-center gap-2 text-decoration-none"
+                   style="background: #f5c518; color: #1a1a1a; padding: 0.45rem 1rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; transition: background 0.2s;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="16"/>
+                        <line x1="8" y1="12" x2="16" y2="12"/>
+                    </svg>
+                    <span class="d-none d-md-inline">Publier</span>
+                </a>
+
+           
+
 
             <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-secondary-bg shadow-md overflow-hidden sm:rounded-3xl border border-white border-opacity-10">
                 {{ $slot }}

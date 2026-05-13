@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bien;
-use App\Models\Emploi;
-use App\Models\Voiture;
+use App\Models\Annonce;
 use App\Models\Categorie;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $biens = Bien::with('user')->get();
-        $emplois = Emploi::with('user')->get();
-        $voitures = Voiture::with('user')->get();
-        $categories = Categorie::all(); // Assuming you have a Category model
+        $categories = Categorie::orderBy('name')->get();
+        $annonces = Annonce::with('categorie')
+            ->orderByDesc('created_at')
+            ->get();
 
-        return view('home', compact('categories', 'biens', 'emplois', 'voitures'));
+        return view('home', compact('categories', 'annonces'));
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Annonce;
 use App\Models\Categorie;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
 {
@@ -23,6 +24,26 @@ class AdminController extends Controller
         $recentUsers = User::latest()
             ->take(5)
             ->get();
+
+        $monthlyAnnonceCounts = Annonce::selectRaw('MONTH(created_at) as month, COUNT(*) as total')
+            ->whereYear('created_at', now()->year)
+            ->groupBy('month')
+            ->pluck('total', 'month');
+
+        $monthLabels = collect(range(1, 12))->map(function (int $month) {
+            return Carbon::create(null, $month, 1)->locale('fr')->isoFormat('MMM');
+        });
+
+        $annoncesChartData = collect(range(1, 12))->map(function (int $month) use ($monthlyAnnonceCounts) {
+            return (int) ($monthlyAnnonceCounts[$month] ?? 0);
+        });
+
+        $categoryStats = Categorie::withCount('annonces')
+            ->orderByDesc('annonces_count')
+            ->get();
+
+        $categoryChartLabels = $categoryStats->pluck('name');
+        $categoryChartData = $categoryStats->pluck('annonces_count')->map(fn ($count) => (int) $count);
 
         $recentActivities = collect([
             (object)[
@@ -55,7 +76,11 @@ class AdminController extends Controller
             'totalCategories',
             'recentAnnonces',
             'recentUsers',
-            'recentActivities'
+            'recentActivities',
+            'monthLabels',
+            'annoncesChartData',
+            'categoryChartLabels',
+            'categoryChartData'
         ));
     }
 }

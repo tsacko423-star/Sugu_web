@@ -23,7 +23,7 @@
             {{-- Icônes de droite --}}
             <div class="d-flex align-items-center gap-3 flex-wrap py-3 py-lg-0">
                 {{-- Icône : Publier une annonce --}}
-                <a href="{{ route('annonces.create') }}"
+                <a href="{{ route('login') }}"
                    title="Publier une annonce"
                    class="d-flex align-items-center gap-2 text-decoration-none"
                    style="background: #f5c518; color: #1a1a1a; padding: 0.45rem 1rem; border-radius: 999px; font-weight: 700; font-size: 0.85rem; transition: background 0.2s;">

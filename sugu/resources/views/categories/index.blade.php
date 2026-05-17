@@ -27,15 +27,17 @@
                         <tr>
                             <td>{{ $categorie->id }}</td>
                             <td>{{ $categorie->name }}</td>
-                            <td class="d-flex flex-column gap-2">
-                                <a href="{{ route('categories.edit', $categorie->id) }}" class="btn btn-outline-dark w-100">
-                                    Modifier
+                            <td class="d-flex gap-2">
+                                <a href="{{ route('categories.edit', $categorie->id) }}" class="btn btn-warning btn-sm rounded-3">
+                                     <i class="bi bi-pencil-fill"></i>
+                                    
                                 </a>
                                 <form action="{{ route('categories.destroy', $categorie->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger w-100">
-                                        Supprimer
+                                    <button type="submit" class="btn btn-danger btn-sm rounded-3">
+                                         <i class="bi bi-trash-fill"></i>
+                                        
                                     </button>
                                 </form>
                             </td>

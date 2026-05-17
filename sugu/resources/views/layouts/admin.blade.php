@@ -200,6 +200,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            text-decoration: none;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
@@ -744,7 +745,12 @@
                 <span>Gestion des annonces</span>
             </a>
 
-            <a href="#" class="nav-link">
+            <a href="{{ route('messages.inbox') }}" class="nav-link {{ request()->routeIs('messages.*') ? 'active' : '' }}">
+                <i class="bi bi-envelope-fill"></i>
+                <span>Messages reçus</span>
+            </a>
+
+            <a href="{{ route('admin.dashboard') }}" class="nav-link">
                 <i class="bi bi-people-fill"></i>
                 <span>Utilisateurs</span>
             </a>
@@ -777,15 +783,15 @@
                 </div>
 
                 <div class="navbar-actions">
-                    <button class="navbar-btn" title="Messages">
+                    <a href="{{ route('messages.inbox') }}" class="navbar-btn" title="Messages" aria-label="Messages">
                         <i class="bi bi-envelope"></i>
                         <span class="notification-badge">3</span>
-                    </button>
+                    </a>
 
-                    <button class="navbar-btn" title="Notifications">
+                    <a href="{{ route('admin.dashboard') }}" class="navbar-btn" title="Notifications" aria-label="Notifications">
                         <i class="bi bi-bell"></i>
                         <span class="notification-badge">5</span>
-                    </button>
+                    </a>
 
                     <div class="dropdown">
                         <div class="admin-profile" data-bs-toggle="dropdown" aria-expanded="false">
@@ -797,8 +803,8 @@
                             <i class="bi bi-chevron-down ms-2" style="font-size: 0.75rem; color: var(--sugu-text-muted);"></i>
                         </div>
                         <ul class="dropdown-menu dropdown-menu-end" style="background: var(--sugu-bg-card); border-color: var(--sugu-border);">
-                            <li><a class="dropdown-item" href="#" style="color: var(--sugu-text-muted);"><i class="bi bi-person me-2"></i>Mon profil</a></li>
-                            <li><a class="dropdown-item" href="#" style="color: var(--sugu-text-muted);"><i class="bi bi-gear me-2"></i>Paramètres</a></li>
+                            <li><a class="dropdown-item" href="{{ route('profile.edit') }}" style="color: var(--sugu-text-muted);"><i class="bi bi-person me-2"></i>Mon profil</a></li>
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}" style="color: var(--sugu-text-muted);"><i class="bi bi-gear me-2"></i>Paramètres</a></li>
                             <li><hr class="dropdown-divider" style="border-color: var(--sugu-border);"></li>
                             <li>
                                 <a class="dropdown-item" href="#" style="color: var(--sugu-danger);" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

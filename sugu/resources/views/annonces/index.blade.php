@@ -40,11 +40,16 @@
                             <p class="card-text text-truncate">{{ $annonce->description }}</p>
                             <div class="mt-auto">
                                 <p class="h5 text-primary mb-2">{{ number_format($annonce->prix, 0, ',', ' ') }} FCFA</p>
-                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
                                     <span class="badge bg-secondary">{{ ucfirst($annonce->categorie->name ?? 'Annonce') }}</span>
-                                    <a href="{{ route('annonces.show', $annonce->id) }}" class="btn btn-luxe btn-sm">
-                                        <i class="bi bi-eye"></i> Voir
-                                    </a>
+                                    <div class="d-flex gap-2">
+                                        <a href="{{ route('annonces.show', $annonce->id) }}" class="btn btn-outline-dark btn-sm">
+                                            <i class="bi bi-eye"></i> Voir
+                                        </a>
+                                        <a href="{{ route('annonces.show', $annonce->id) }}#contact-vendeur" class="btn btn-luxe btn-sm">
+                                            <i class="bi bi-envelope"></i> Contacter
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

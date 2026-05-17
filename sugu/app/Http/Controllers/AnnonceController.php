@@ -15,9 +15,12 @@ class AnnonceController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $annonces = Annonce::with('categorie')
+            ->when($request->routeIs('annonces.index') && Auth::check() && Auth::user()->role !== 'admin', function ($query) {
+                $query->where('user_id', Auth::id());
+            })
             ->orderByDesc('created_at')
             ->get();
 
@@ -120,6 +123,8 @@ class AnnonceController extends Controller
     public function edit(string $id)
     {
        $annonce = Annonce::with('annonceAttributs')->findOrFail($id);
+       $this->authorizeAnnonceOwner($annonce);
+
        $categories = Categorie::all();
         return view('annonces.edit', compact('annonce', 'categories'));
     }
@@ -130,6 +135,7 @@ class AnnonceController extends Controller
     public function update(UpdateAnnonceRequest $request, string $id)
     {
         $annonce = Annonce::findOrFail($id);
+        $this->authorizeAnnonceOwner($annonce);
         
         $imagePaths = $annonce->images ?? [];
         
@@ -175,6 +181,7 @@ class AnnonceController extends Controller
     public function destroy(string $id)
     {
         $annonce = Annonce::findOrFail($id);
+        $this->authorizeAnnonceOwner($annonce);
         
         // Delete images
         if ($annonce->images) {
@@ -185,6 +192,17 @@ class AnnonceController extends Controller
         
         $annonce->delete();
         return back();
+    }
+
+    private function authorizeAnnonceOwner(Annonce $annonce): void
+    {
+        if (Auth::user()->role === 'admin') {
+            return;
+        }
+
+        if ((int) $annonce->user_id !== (int) Auth::id()) {
+            abort(403, 'Accès refusé');
+        }
     }
 
  

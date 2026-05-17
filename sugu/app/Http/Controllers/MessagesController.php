@@ -1,10 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MessagesController extends Controller
 {
@@ -63,14 +63,53 @@ class MessagesController extends Controller
 
     public function inbox()
     {
-        $messages = Message::where('receiver_id', auth()->id())->get();
+        $messages = Message::with('sender')
+            ->where('receiver_id', auth()->id())
+            ->latest()
+            ->get();
+
         return view('messages.inbox', compact('messages'));
     }
 
     public function sent()
     {
-        $messages = Message::where('sender_id', auth()->id())->get();
+        $messages = Message::with('receiver')
+            ->where('sender_id', auth()->id())
+            ->latest()
+            ->get();
+
         return view('messages.sent', compact('messages'));
+    }
+
+    public function send(Request $request)
+    {
+        $rules = [
+            'receiver_id' => 'required|exists:users,id',
+            'contenu' => 'required|string',
+        ];
+
+        if (!Auth::check()) {
+            $rules['sender_name'] = 'required|string|max:255';
+            $rules['sender_email'] = 'required|email|max:255';
+        }
+
+        $validated = $request->validate($rules);
+
+        $data = [
+            'receiver_id' => $validated['receiver_id'],
+            'contenu' => $validated['contenu'],
+        ];
+
+        if (Auth::check()) {
+            $data['sender_id'] = Auth::id();
+        } else {
+            $data['sender_name'] = $validated['sender_name'];
+            $data['sender_email'] = $validated['sender_email'];
+        }
+
+        Message::create($data);
+
+        return back()->with('success', 'Message envoyé avec succès.');
     }
 
     /**

@@ -814,12 +814,12 @@
                 </div>
 
                 <div class="navbar-actions">
-                    <button class="navbar-btn" title="Messages" onclick="location.href='#'">
+                    <button class="navbar-btn" title="Messages" onclick="location.href='{{ route('messages.inbox') }}'">
                         <i class="bi bi-chat-dots"></i>
                         <span class="notification-badge">{{ $unreadMessages ?? 0 }}</span>
                     </button>
                     
-                    <button class="navbar-btn" title="Notifications" onclick="location.href='#'">
+                    <button class="navbar-btn" title="Notifications" onclick="location.href='{{ route('dashboard') }}'">
                         <i class="bi bi-bell"></i>
                         <span class="notification-badge">{{ $unreadNotifications ?? 0 }}</span>
                     </button>
@@ -1009,7 +1009,7 @@
                                     <i class="bi bi-person me-2"></i>
                                     Modifier mon profil
                                 </a>
-                                <a href="#" class="btn-outline-custom text-center d-block">
+                                <a href="{{ route('messages.inbox') }}" class="btn-outline-custom text-center d-block">
                                     <i class="bi bi-chat-dots me-2"></i>
                                     Voir mes messages
                                 </a>

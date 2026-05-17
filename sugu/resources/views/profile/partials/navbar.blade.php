@@ -20,6 +20,10 @@
                 @endguest
 
                 @auth
+                    <a href="{{ route('messages.inbox') }}" class="d-flex align-items-center navbar-action" title="Messages reçus">
+                        <i class="bi bi-inbox"></i>
+                        <span>Messages</span>
+                    </a>
                     <a href="{{ route('dashboard') }}" class="d-flex align-items-center navbar-action" title="Tableau de bord">
                         <i class="bi bi-speedometer2"></i>
                         <span>Dashboard</span>
@@ -47,6 +51,12 @@
                     <a class="nav-link" href="{{ route('annonces.index') }}">Annonces</a>
                 </li>
                 @auth
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('messages.inbox') }}">Messages reçus</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('messages.sent') }}">Messages envoyés</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#contactAdminModal">Contacter Admin</a>
                     </li>
@@ -84,5 +94,4 @@
     </div>
 </div>
 @endauth
-
 

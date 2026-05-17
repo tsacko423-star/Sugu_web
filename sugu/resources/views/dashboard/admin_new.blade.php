@@ -47,7 +47,7 @@
                     <i class="bi bi-arrow-up"></i> 23%
                 </span>
             </div>
-            <div class="stat-value">{{ number_format($totalRevenue ?? 0, 0, ',', ' ') }}€</div>
+            <div class="stat-value">{{ number_format($totalRevenue ?? 0, 0, ',', ' ') }}FCFA</div>
             <div class="stat-label">Revenus Totaux</div>
         </div>
     </div>
@@ -72,11 +72,7 @@
         <div class="dashboard-card">
             <div class="dashboard-card-header">
                 <h5 class="dashboard-card-title">Annonces Publiées</h5>
-                <div class="d-flex gap-2">
-                    <button class="btn-outline-custom btn-sm" data-period="week">Semaine</button>
-                    <button class="btn-primary-custom btn-sm" data-period="month">Mois</button>
-                    <button class="btn-outline-custom btn-sm" data-period="year">Année</button>
-                </div>
+                <span class="badge-status active">{{ now()->year }}</span>
             </div>
             <div class="dashboard-card-body">
                 <div class="chart-container">
@@ -123,10 +119,15 @@
                         </thead>
                         <tbody>
                             @forelse($recentAnnonces as $annonce)
+                            @php
+                                $firstImage = is_array($annonce->images) && count($annonce->images) > 0
+                                    ? $annonce->images[0]
+                                    : null;
+                            @endphp
                             <tr>
                                 <td>
                                     <div class="user-item">
-                                        <img src="{{ $annonce->image ?? 'https://via.placeholder.com/40' }}" alt="" class="user-avatar">
+                                        <img src="{{ $firstImage ? asset('storage/' . $firstImage) : 'https://ui-avatars.com/api/?name=' . urlencode($annonce->titre) . '&background=f97316&color=fff' }}" alt="{{ $annonce->titre }}" class="user-avatar">
                                         <div class="user-info">
                                             <h6>{{ $annonce->titre }}</h6>
                                             <small>{{ $annonce->user->name ?? 'Utilisateur' }}</small>
@@ -136,16 +137,24 @@
                                 <td><span class="badge-status pending">{{ $annonce->categorie->name ?? 'Non classé' }}</span></td>
                                 <td class="fw-semibold">{{ number_format($annonce->prix ?? 0, 0, ',', ' ') }}FCFA</td>
                                 <td>
-                                    <span class="badge-status {{ ($annonce->status ?? 'pending') === 'active' ? 'active' : (($annonce->status ?? 'pending') === 'pending' ? 'pending' : 'inactive') }}">
-                                        {{ ucfirst($annonce->status ?? 'pending') }}
-                                    </span>
+                                    <span class="badge-status active">Publiée</span>
                                 </td>
                                 <td style="color: var(--sugu-text-muted);">{{ optional($annonce->created_at)->format('d/m/Y') }}</td>
                                 <td>
                                     <div class="d-flex gap-2">
-                                        <button class="btn-action view" title="Voir"><i class="bi bi-eye"></i></button>
-                                        <button class="btn-action edit" title="Modifier"><i class="bi bi-pencil"></i></button>
-                                        <button class="btn-action delete" title="Supprimer"><i class="bi bi-trash"></i></button>
+                                        <a href="{{ route('annonces.show', $annonce) }}" class="btn-action view" title="Voir" aria-label="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{{ route('annonces.edit', $annonce) }}" class="btn-action edit" title="Modifier" aria-label="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <form action="{{ route('annonces.destroy', $annonce) }}" method="POST" class="m-0" onsubmit="return confirm('Supprimer cette annonce ?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn-action delete" title="Supprimer" aria-label="Supprimer">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -226,14 +235,19 @@
 <script>
 /* global Chart */
 document.addEventListener('DOMContentLoaded', function() {
+    const annoncesLabels = @json($monthLabels ?? []);
+    const annoncesData = @json($annoncesChartData ?? []);
+    const categoryLabels = @json($categoryChartLabels ?? []);
+    const categoryData = @json($categoryChartData ?? []);
+
     const annoncesCtx = document.getElementById('annoncesChart').getContext('2d');
-    const annoncesChart = new Chart(annoncesCtx, {
+    new Chart(annoncesCtx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'],
+            labels: annoncesLabels,
             datasets: [{
-                label: 'Annonces publiées',
-                data: [120, 150, 180, 220, 280, 320, 350, 310, 290, 340, 380, 420],
+                label: 'Annonces publiees',
+                data: annoncesData,
                 borderColor: '#f97316',
                 backgroundColor: 'rgba(249, 115, 22, 0.1)',
                 borderWidth: 3,
@@ -250,9 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    display: false
-                },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: '#111827',
                     titleColor: '#f8fafc',
@@ -263,44 +275,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     displayColors: false,
                     callbacks: {
                         title: function(context) {
-                            return context[0].label + ' 2026';
+                            return context[0].label + ' {{ now()->year }}';
                         }
                     }
                 }
             },
             scales: {
                 x: {
-                    grid: {
-                        color: 'rgba(31, 41, 55, 0.5)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: '#94a3b8'
-                    }
+                    grid: { color: 'rgba(31, 41, 55, 0.5)', drawBorder: false },
+                    ticks: { color: '#94a3b8' }
                 },
                 y: {
-                    grid: {
-                        color: 'rgba(31, 41, 55, 0.5)',
-                        drawBorder: false
-                    },
-                    ticks: {
-                        color: '#94a3b8'
-                    },
+                    grid: { color: 'rgba(31, 41, 55, 0.5)', drawBorder: false },
+                    ticks: { color: '#94a3b8', precision: 0 },
                     beginAtZero: true
                 }
             }
         }
     });
 
-    // eslint-disable-next-line no-undef
     const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
-    const categoriesChart = new Chart(categoriesCtx, {
+    new Chart(categoriesCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Immobilier', 'Automobile', 'Électronique', 'Mode', 'Mobilier', 'Autres'],
+            labels: categoryLabels,
             datasets: [{
-                data: [30, 25, 20, 12, 8, 5],
-                backgroundColor: ['#3b82f6', '#10b981', '#f97316', '#8b5cf6', '#f59e0b', '#6b7280'],
+                data: categoryData,
+                backgroundColor: ['#3b82f6', '#10b981', '#f97316', '#8b5cf6', '#f59e0b', '#6b7280', '#ef4444', '#14b8a6'],
                 borderWidth: 0,
                 hoverOffset: 10
             }]
@@ -315,9 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         color: '#94a3b8',
                         padding: 15,
                         usePointStyle: true,
-                        font: {
-                            size: 12
-                        }
+                        font: { size: 12 }
                     }
                 },
                 tooltip: {
@@ -329,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     padding: 12,
                     callbacks: {
                         label: function(context) {
-                            return context.label + ': ' + context.parsed + '%';
+                            return context.label + ': ' + context.parsed + ' annonce(s)';
                         }
                     }
                 }
@@ -337,18 +336,8 @@ document.addEventListener('DOMContentLoaded', function() {
             cutout: '65%'
         }
     });
-
-    document.querySelectorAll('[data-period]').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('[data-period]').forEach(b => {
-                b.classList.remove('btn-primary-custom');
-                b.classList.add('btn-outline-custom');
-            });
-            this.classList.remove('btn-outline-custom');
-            this.classList.add('btn-primary-custom');
-            console.log('Selected period:', this.dataset.period);
-        });
-    });
 });
 </script>
 @endpush
+
+

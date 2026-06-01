@@ -69,7 +69,7 @@ class AdminController extends Controller
             ],
         ]);
 
-        return view('dashboard.admin_new', compact(
+        return view('dashboard.admin', compact(
             'totalUsers',
             'totalAnnonces',
             'totalRevenue',

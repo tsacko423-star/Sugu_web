@@ -1,55 +1,32 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter un bien</title>
+@extends('layouts.dashboard')
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Créer un bien')
 
-<div class="container mt-5">
-    <div class="card shadow p-4">
-        <h2 class="text-center mb-4">Ajouter un bien</h2>
+@section('content')
+    <div class="container mt-5">
+        <div class="card shadow p-4">
+            <h2 class="text-center mb-4">Créer un bien</h2>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+            <form action="{{ route('biens.store') }}" method="POST">
+                @csrf
 
-        <form method="POST" enctype="multipart/form-data" action="{{ route('biens.store') }}">
-            @csrf
+                <div class="mb-3">
+                    <label class="form-label">Titre</label>
+                    <input type="text" name="titre" value="{{ old('titre') }}" class="form-control" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Titre</label>
-                <input type="text" name="titre" value="{{ old('titre') }}" class="form-control" placeholder="Ex: Maison, Terrain..." required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Ville</label>
+                    <input type="text" name="ville" value="{{ old('ville') }}" class="form-control" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Ville</label>
-                <input type="text" name="ville" value="{{ old('ville') }}" class="form-control" placeholder="Ex: Bamako" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Prix</label>
+                    <input type="number" name="prix" value="{{ old('prix') }}" class="form-control" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Prix</label>
-                <input type="number" name="prix" class="form-control" placeholder="Ex: 10000000" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Images</label>
-                <input type="file" name="images[]" class="form-control" multiple>
-                <small class="text-muted">Vous pouvez sélectionner plusieurs images</small>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100">Ajouter</button>
-        </form>
+                <button type="submit" class="btn btn-success w-100">Créer</button>
+            </form>
+        </div>
     </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+@endsection

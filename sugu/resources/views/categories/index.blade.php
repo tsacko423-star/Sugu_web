@@ -1,51 +1,47 @@
-@extends('layouts.admin')
+@extends(‘layouts.admin’)
 
-@section('content')
-<div class="container py-5 mt-5">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-        <div>
-            <h1 class="display-6">Liste des catégories</h1>
-            <p class="text-secondary">Gérez les catégories de votre marketplace depuis l’espace admin.</p>
-        </div>
-        <a href="{{ route('categories.create') }}" class="btn btn-luxe">
-            <i class="bi bi-plus-circle me-2"></i>Ajouter une catégorie
-        </a>
+@section(‘content’)
+<div class="page-header d-flex justify-content-between align-items-start mb-4">
+    <div>
+        <h1 class="h2 mb-2" style="color: var(--sugu-text);">Liste des catégories</h1>
+        <p class="mb-0" style="color: var(--sugu-text-muted);">Gérez les catégories de votre marketplace depuis l’espace admin.</p>
     </div>
+    <a href="{{ route(‘categories.create’) }}" class="btn-primary-custom" style="white-space: nowrap;">
+        <i class="bi bi-plus-circle me-2"></i>Ajouter une catégorie
+    </a>
+</div>
 
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-dark table-striped align-middle mb-0">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nom</th>
-                        <th>Actions</th>
+<div class="dashboard-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0" style="color: var(--sugu-text);">
+            <thead>
+                <tr style="border-bottom: 1px solid var(--sugu-border);">
+                    <th style="color: var(--sugu-text-muted);">ID</th>
+                    <th style="color: var(--sugu-text-muted);">Nom</th>
+                    <th style="color: var(--sugu-text-muted);">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($categories as $categorie)
+                    <tr style="border-bottom: 1px solid var(--sugu-border);">
+                        <td>{{ $categorie->id }}</td>
+                        <td>{{ $categorie->name }}</td>
+                        <td class="d-flex gap-2">
+                            <a href="{{ route(‘categories.edit’, $categorie->id) }}" class="btn-action edit" title="Modifier">
+                                 <i class="bi bi-pencil-fill"></i>
+                            </a>
+                            <form action="{{ route(‘categories.destroy’, $categorie->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method(‘DELETE’)
+                                <button type="submit" class="btn-action delete" title="Supprimer">
+                                     <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </form>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach ($categories as $categorie)
-                        <tr>
-                            <td>{{ $categorie->id }}</td>
-                            <td>{{ $categorie->name }}</td>
-                            <td class="d-flex gap-2">
-                                <a href="{{ route('categories.edit', $categorie->id) }}" class="btn btn-warning btn-sm rounded-3">
-                                     <i class="bi bi-pencil-fill"></i>
-                                    
-                                </a>
-                                <form action="{{ route('categories.destroy', $categorie->id) }}" method="POST">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm rounded-3">
-                                         <i class="bi bi-trash-fill"></i>
-                                        
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 </div>
 @endsection

@@ -1,60 +1,49 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Ajouter une voiture</title>
+@extends('layouts.dashboard')
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Ajouter une voiture')
 
-<div class="container mt-5">
-    <div class="card shadow p-4">
-        <h2 class="text-center mb-4">Ajouter une voiture</h2>
+@section('content')
+    <div class="container mt-5">
+        <div class="card shadow p-4">
+            <h2 class="text-center mb-4">Ajouter une voiture</h2>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-        <form action="{{ route('voitures.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+            <form action="{{ route('voitures.store') }}" method="POST" enctype="multipart/form-data">
+                @csrf
 
-            <div class="mb-3">
-                <label class="form-label">Marque</label>
-                <input type="text" name="marque" class="form-control" placeholder="Ex: Toyota" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Marque</label>
+                    <input type="text" name="marque" class="form-control" placeholder="Ex: Toyota" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Modèle</label>
-                <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Modèle</label>
+                    <input type="text" name="modele" class="form-control" placeholder="Ex: Corolla" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Année</label>
-                <input type="number" name="annee" class="form-control" placeholder="Ex: 2020" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Année</label>
+                    <input type="number" name="annee" class="form-control" placeholder="Ex: 2020" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Prix</label>
-                <input type="number" name="prix" class="form-control" placeholder="Ex: 5000000" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Prix</label>
+                    <input type="number" name="prix" class="form-control" placeholder="Ex: 5000000" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Image (optionnel)</label>
-                <input type="file" name="image" class="form-control">
-                <div class="form-text">Formats acceptés: JPG, JPEG, PNG. Taille max: 2MB</div>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Image (optionnel)</label>
+                    <input type="file" name="image" class="form-control">
+                    <div class="form-text">Formats acceptés: JPG, JPEG, PNG. Taille max: 2MB</div>
+                </div>
 
-            <button type="submit" class="btn btn-primary w-100">Ajouter</button>
-        </form>
+                <button type="submit" class="btn btn-primary w-100">Ajouter</button>
+            </form>
+        </div>
     </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+@endsection

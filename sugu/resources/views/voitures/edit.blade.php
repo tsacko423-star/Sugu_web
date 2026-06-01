@@ -1,61 +1,48 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Modifier une voiture</title>
+@extends('layouts.dashboard')
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
+@section('title', 'Modifier une voiture')
 
-<div class="container mt-5">
-    <div class="card shadow p-4">
-        <h2 class="text-center mb-4">Modifier une voiture</h2>
+@section('content')
+    <div class="container mt-5">
+        <div class="card shadow p-4">
+            <h2 class="text-center mb-4">Modifier une voiture</h2>
 
-        @if(session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+            @if(session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
 
-       <form enctype="multipart/form-data" action="{{ route('voitures.update', $voiture->id) }}" method="POST">
-    @csrf
-    @method('PUT')
+            <form enctype="multipart/form-data" action="{{ route('voitures.update', $voiture->id) }}" method="POST">
+                @csrf
+                @method('PUT')
 
-            <div class="mb-3">
-                <label class="form-label">Marque</label>
-                <input type="text" name="marque" value="{{ old('marque', $voiture->marque) }}" class="form-control" placeholder="Ex: Toyota" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Marque</label>
+                    <input type="text" name="marque" value="{{ old('marque', $voiture->marque) }}" class="form-control" placeholder="Ex: Toyota" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Modèle</label>
-                <input type="text" name="modele" value="{{ old('modele', $voiture->modele) }}" class="form-control" placeholder="Ex: Corolla" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Modèle</label>
+                    <input type="text" name="modele" value="{{ old('modele', $voiture->modele) }}" class="form-control" placeholder="Ex: Corolla" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Année</label>
-                <input type="number" name="annee" value="{{ old('annee', $voiture->annee) }}" class="form-control" placeholder="Ex: 2020" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Année</label>
+                    <input type="number" name="annee" value="{{ old('annee', $voiture->annee) }}" class="form-control" placeholder="Ex: 2020" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Prix</label>
-                <input type="number" name="prix" value="{{ old('prix', $voiture->prix) }}" class="form-control" placeholder="Ex: 5000000" required>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Prix</label>
+                    <input type="number" name="prix" value="{{ old('prix', $voiture->prix) }}" class="form-control" placeholder="Ex: 5000000" required>
+                </div>
 
-            <div class="mb-3">
-                <label class="form-label">Image</label>
-                <input type="file" name="image" class="form-control">
-                <small class="text-muted">Laissez vide pour conserver l'image existante.</small>
-            </div>
+                <div class="mb-3">
+                    <label class="form-label">Image</label>
+                    <input type="file" name="image" class="form-control">
+                    <small class="text-muted">Laissez vide pour conserver l'image existante.</small>
+                </div>
 
-            <button type="submit" class="btn btn-primary w-100">Modifier</button>
-        </form>
+                <button type="submit" class="btn btn-primary w-100">Modifier</button>
+            </form>
+        </div>
     </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</body>
-</html>
+@endsection

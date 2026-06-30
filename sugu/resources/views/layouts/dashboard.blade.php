@@ -30,30 +30,34 @@
         </div>
 
         <nav class="sidebar-nav">
-            <div class="nav-section-title">Navigation</div>
-            <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-                <i class="bi bi-house-fill"></i>
-                <span>Accueil</span>
-            </a>
-            <a href="{{ route('annonces.index') }}" class="nav-link {{ request()->routeIs('annonces.*') ? 'active' : '' }}">
-                <i class="bi bi-megaphone-fill"></i>
-                <span>Mes annonces</span>
-            </a>
-            <a href="{{ route('annonces.create') }}" class="nav-link {{ request()->routeIs('annonces.create') ? 'active' : '' }}">
-                <i class="bi bi-plus-circle-fill"></i>
-                <span>Ajouter une annonce</span>
-            </a>
+            @hasSection('sidebar_nav')
+                @yield('sidebar_nav')
+            @else
+                <div class="nav-section-title">Navigation</div>
+                <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                    <i class="bi bi-house-fill"></i>
+                    <span>Accueil</span>
+                </a>
+                <a href="{{ route('annonces.index') }}" class="nav-link {{ request()->routeIs('annonces.*') ? 'active' : '' }}">
+                    <i class="bi bi-megaphone-fill"></i>
+                    <span>Mes annonces</span>
+                </a>
+                <a href="{{ route('annonces.create') }}" class="nav-link {{ request()->routeIs('annonces.create') ? 'active' : '' }}">
+                    <i class="bi bi-plus-circle-fill"></i>
+                    <span>Ajouter une annonce</span>
+                </a>
 
-            <div class="nav-section-title mt-3">Compte</div>
-            <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
-                <i class="bi bi-person-fill"></i>
-                <span>Mon profil</span>
-            </a>
-            <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                <i class="bi bi-box-arrow-left"></i>
-                <span>Déconnexion</span>
-            </a>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+                <div class="nav-section-title mt-3">Compte</div>
+                <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+                    <i class="bi bi-person-fill"></i>
+                    <span>Mon profil</span>
+                </a>
+                <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="bi bi-box-arrow-left"></i>
+                    <span>Déconnexion</span>
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+            @endif
         </nav>
     </aside>
 

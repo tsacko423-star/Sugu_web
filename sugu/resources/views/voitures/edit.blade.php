@@ -35,10 +35,24 @@
                     <input type="number" name="prix" value="{{ old('prix', $voiture->prix) }}" class="form-control" placeholder="Ex: 5000000" required>
                 </div>
 
+                @php
+                    $existingImages = is_array($voiture->image) ? $voiture->image : [];
+                @endphp
+                @if(count($existingImages) > 0)
+                    <div class="mb-3">
+                        <label class="form-label">Images existantes</label>
+                        <div class="d-flex gap-2 flex-wrap">
+                            @foreach($existingImages as $img)
+                                <img src="{{ asset('storage/' . $img) }}" class="rounded" style="height: 100px; width: 100px; object-fit: cover;">
+                            @endforeach
+                        </div>
+                    </div>
+                @endif
+
                 <div class="mb-3">
-                    <label class="form-label">Image</label>
-                    <input type="file" name="image" class="form-control">
-                    <small class="text-muted">Laissez vide pour conserver l'image existante.</small>
+                    <label class="form-label">Ajouter des images</label>
+                    <input type="file" name="images[]" class="form-control" multiple accept="image/*">
+                    <small class="text-muted">Sélectionnez de nouvelles images pour les ajouter à la galerie.</small>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Modifier</button>

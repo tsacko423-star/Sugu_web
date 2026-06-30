@@ -13,10 +13,13 @@
 
 <div class="row g-4">
     @foreach($voitures as $voiture)
+    @php
+        $firstImage = is_array($voiture->image) && count($voiture->image) > 0 ? $voiture->image[0] : null;
+    @endphp
     <div class="col-md-6 col-lg-4">
         <div class="dashboard-card h-100">
-            @if($voiture->image)
-                <img src="{{ asset('storage/' . $voiture->image) }}"
+            @if($firstImage)
+                <img src="{{ asset('storage/' . $firstImage) }}"
                      class="card-img-top"
                      alt="{{ $voiture->marque }} {{ $voiture->modele }}"
                      style="height: 200px; object-fit: cover; width: 100%;">

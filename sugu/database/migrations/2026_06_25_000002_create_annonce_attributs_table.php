@@ -6,23 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('annonce_attributs', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100);
+            $table->foreignId('annonce_id')->constrained('annonces')->cascadeOnDelete();
+            $table->string('nom');
+            $table->string('valeur');
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::dropIfExists('annonce_attributs');
     }
 };

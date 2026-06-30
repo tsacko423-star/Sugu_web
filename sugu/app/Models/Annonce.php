@@ -2,32 +2,46 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Annonce extends Model
 {
-    protected $fillable = ['titre', 'description', 'prix', 'user_id', 'categorie_id', 'images'];
+    use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'categorie_id',
+        'titre',
+        'description',
+        'prix',
+        'images',
+    ];
 
     protected $casts = [
         'images' => 'array',
+        'prix' => 'decimal:2',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function categorie()
+    public function categorie(): BelongsTo
     {
-        return $this->belongsTo(Categorie::class);
+        return $this->belongsTo(Category::class, 'categorie_id');
     }
 
-    public function attributs()
+    public function annonceAttributs(): HasMany
     {
         return $this->hasMany(AnnonceAttribut::class);
     }
-    public function annonceAttributs()
+
+    public function attributs(): HasMany
     {
-        return $this->hasMany(AnnonceAttribut::class);
+        return $this->annonceAttributs();
     }
 }

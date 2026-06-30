@@ -143,13 +143,13 @@ p {
     visibility: visible !important;
     opacity: 1 !important;
 }
+
+.navbar-actions {
     display: flex !important;
     align-items: center;
     justify-content: flex-end;
     gap: 0.75rem;
     flex-wrap: wrap;
-    width: auto !important;
-    min-width: auto !important;
 }
 
 .navbar-action {
@@ -833,5 +833,286 @@ body {
 
     .categories-row {
         gap: var(--spacing-sm);
+    }
+}
+
+/* ===== NAVBAR MODERNE V3 - SANS COLLAPSE ===== */
+
+.sugu-navbar {
+    background: rgba(10, 15, 26, 0.98) !important;
+    border-bottom: 1px solid var(--sugu-border);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    padding: 0.5rem 0;
+    z-index: 1030;
+}
+
+.sugu-navbar .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* Brand Styling */
+.sugu-navbar .navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    padding: 0.25rem 0;
+    flex-shrink: 0;
+}
+
+.brand-icon {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, var(--sugu-accent), var(--sugu-accent-hover));
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.brand-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--sugu-text);
+    letter-spacing: -0.5px;
+}
+
+.brand-accent {
+    color: var(--sugu-accent);
+}
+
+/* Navbar Content - Layout Flex */
+.navbar-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+/* Dropdown Menu */
+.sugu-navbar .dropdown-menu {
+    background: var(--sugu-bg-card);
+    border: 1px solid var(--sugu-border);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    padding: 0.5rem;
+    min-width: 200px;
+    margin-top: 0.5rem;
+}
+
+.sugu-navbar .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    color: var(--sugu-text-muted);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.sugu-navbar .dropdown-item:hover {
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--sugu-accent);
+}
+
+.sugu-navbar .dropdown-divider {
+    border-color: var(--sugu-border);
+    margin: 0.5rem;
+}
+
+.sugu-navbar .dropdown-divider {
+    border-color: var(--sugu-border);
+    margin: 0.5rem;
+}
+
+/* Nav Actions */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+}
+
+/* Nav Buttons */
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+    height: 40px;
+}
+
+.nav-btn-primary {
+    background: var(--sugu-accent);
+    color: white;
+    border-color: var(--sugu-accent);
+}
+
+.nav-btn-primary:hover {
+    background: var(--sugu-accent-hover);
+    border-color: var(--sugu-accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(249, 115, 22, 0.3);
+    color: white;
+}
+
+.nav-btn-secondary {
+    background: transparent;
+    color: var(--sugu-text-muted);
+    border-color: var(--sugu-border);
+}
+
+.nav-btn-secondary:hover {
+    background: rgba(249, 115, 22, 0.1);
+    color: var(--sugu-accent);
+    border-color: var(--sugu-accent);
+}
+
+.nav-btn-secondary.active {
+    background: rgba(249, 115, 22, 0.15);
+    color: var(--sugu-accent) !important;
+    border-color: var(--sugu-accent);
+}
+
+/* Dropdown within nav-actions */
+.nav-actions .dropdown {
+    display: inline-flex;
+}
+
+.nav-actions .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    padding: 0.625rem 1.25rem;
+}
+
+.nav-actions .dropdown-toggle::after {
+    margin-left: 0.5rem;
+}
+
+/* User Button */
+.nav-user-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.375rem 0.75rem 0.375rem 0.375rem;
+    background: var(--sugu-bg-card);
+    border: 1px solid var(--sugu-border);
+    border-radius: 50px;
+    color: var(--sugu-text);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-user-btn:hover {
+    background: var(--sugu-bg-sidebar);
+    border-color: var(--sugu-accent);
+}
+
+.nav-user-btn::after {
+    margin-left: 0.25rem;
+    color: var(--sugu-text-muted);
+}
+
+.nav-user-avatar {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--sugu-accent), var(--sugu-accent-hover));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+}
+
+.nav-user-name {
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Responsive Navbar - Sans collapse */
+@media (max-width: 991.98px) {
+    .sugu-navbar .container {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+
+    .navbar-content {
+        width: 100%;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .nav-actions {
+        gap: 0.5rem;
+    }
+
+    .nav-btn span {
+        display: none;
+    }
+
+    .nav-btn {
+        padding: 0.5rem;
+        width: 40px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .sugu-navbar {
+        padding: 0.375rem 0;
+    }
+
+    .brand-text {
+        font-size: 1.25rem;
+    }
+
+    .nav-actions {
+        gap: 0.5rem;
+    }
+
+    .nav-btn span {
+        display: none;
+    }
+
+    .nav-btn {
+        padding: 0.5rem;
+        width: 40px;
+    }
+
+    .nav-btn i {
+        margin: 0;
+        font-size: 1.1rem;
+    }
+
+    .nav-user-name {
+        display: none;
+    }
+
+    .nav-user-btn {
+        padding: 0.25rem;
     }
 }

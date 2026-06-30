@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class AnnonceAttribut extends Model
 {
-    protected $fillable = ['annonce_id', 'attribut_id', 'valeur'];
+    use HasFactory;
 
-    public function annonce()
+    protected $fillable = [
+        'annonce_id',
+        'nom',
+        'valeur',
+    ];
+
+    public function annonce(): BelongsTo
     {
         return $this->belongsTo(Annonce::class);
-    }
-
-    public function attribut()
-    {
-        return $this->belongsTo(Attribut::class);
     }
 }

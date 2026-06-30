@@ -2,11 +2,14 @@
 
 @section('title', $bien->titre)
 
+@php
+    $firstImage = is_array($bien->image) && count($bien->image) > 0 ? $bien->image[0] : null;
+@endphp
 @section('content')
     <div class="container mt-5">
         <h2 class="mb-0">{{ $bien->titre }}</h2>
-        @if($bien->image_url)
-            <img src="{{ $bien->image_url }}" alt="{{ $bien->titre }}" class="img-fluid mb-3 rounded">
+        @if($firstImage)
+            <img src="{{ asset('storage/' . $firstImage) }}" alt="{{ $bien->titre }}" class="img-fluid mb-3 rounded">
         @endif
 
         <h5 class="text-muted">Description</h5>

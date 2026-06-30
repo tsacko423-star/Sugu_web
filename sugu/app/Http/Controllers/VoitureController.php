@@ -2,113 +2,93 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bien;
-use App\Models\Emploi;
 use App\Models\Voiture;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class VoitureController extends Controller
 {
-    // Formulaire admin
+    public function index()
+    {
+        $voitures = Voiture::with('user')->latest()->get();
+
+        return view('voitures.index', compact('voitures'));
+    }
+
     public function create()
     {
         return view('voitures.create');
     }
 
-    // Enregistrer voiture
     public function store(Request $request)
     {
-        $request->validate([
-            'marque' => 'required|string|max:255',
-            'modele' => 'required|string|max:255',
-            'annee' => 'required|integer',
-            'prix' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        $validated = $request->validate([
+            'marque' => ['required', 'string', 'max:255'],
+            'modele' => ['required', 'string', 'max:255'],
+            'annee' => ['required', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
+            'prix' => ['required', 'numeric', 'min:0'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
         ]);
 
-        // Upload image si fournie
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('voitures', 'public');
-        }
+        $validated['user_id'] = $request->user()->id;
+        $validated['image'] = $this->storeImages($request);
+        unset($validated['images']);
 
-        // Création
-        Voiture::create([
-            'marque' => $request->marque,
-            'modele' => $request->modele,
-            'annee' => $request->annee,
-            'prix' => $request->prix,
-            'image' => $imagePath,
-            'user_id' => Auth::id()
-        ]);
+        Voiture::create($validated);
 
-        // Redirection vers page publique
-        return redirect()->route('home')
-            ->with('success', 'Voiture ajoutée avec succès');
-    }
-
-    // Page publique
-    public function index()
-    {
-         $biens = Bien::latest()->get();
-        $voitures = Voiture::latest()->get();
-        $emplois = Emploi::latest()->get();
-
-        return view('voitures.index', compact('biens', 'voitures', 'emplois'));
+        return redirect()->route('voitures.index')->with('success', 'Voiture creee avec succes.');
     }
 
     public function show($id)
     {
-        $voiture = Voiture::findOrFail($id);
+        $voiture = Voiture::with('user')->findOrFail($id);
+
         return view('voitures.show', compact('voiture'));
     }
 
     public function edit($id)
     {
         $voiture = Voiture::findOrFail($id);
+
         return view('voitures.edit', compact('voiture'));
     }
 
     public function update(Request $request, $id)
     {
         $voiture = Voiture::findOrFail($id);
-
-        $request->validate([
-            'marque' => 'required|string|max:255',
-            'modele' => 'required|string|max:255',
-            'annee' => 'required|integer',
-            'prix' => 'required|numeric',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+        $validated = $request->validate([
+            'marque' => ['required', 'string', 'max:255'],
+            'modele' => ['required', 'string', 'max:255'],
+            'annee' => ['required', 'integer', 'min:1900', 'max:' . (date('Y') + 1)],
+            'prix' => ['required', 'numeric', 'min:0'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
         ]);
 
-        // Mise à jour des champs
-        $data = [
-            'marque' => $request->marque,
-            'modele' => $request->modele,
-            'annee' => $request->annee,
-            'prix' => $request->prix,
-        ];
+        $newImages = $this->storeImages($request);
+        $validated['image'] = array_values(array_filter(array_merge($voiture->image ?? [], $newImages)));
+        unset($validated['images']);
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('voitures', 'public');
-        }
+        $voiture->update($validated);
 
-        $voiture->update($data);
-
-        // Redirection vers page publique
-        return redirect()->route('home')
-            ->with('success', 'Voiture mise à jour avec succès');
+        return redirect()->route('voitures.index')->with('success', 'Voiture modifiee avec succes.');
     }
 
     public function destroy($id)
     {
-        $voiture = Voiture::findOrFail($id);
-        $voiture->delete();
+        Voiture::findOrFail($id)->delete();
 
-        return redirect()->route('home')
-            ->with('success', 'Voiture supprimée avec succès');
+        return redirect()->route('voitures.index')->with('success', 'Voiture supprimee avec succes.');
+    }
 
-     }          
+    private function storeImages(Request $request): array
+    {
+        if (!$request->hasFile('images')) {
+            return [];
+        }
+
+        return collect($request->file('images'))
+            ->map(fn ($image) => $image->store('voitures', 'public'))
+            ->all();
+    }
 }
-

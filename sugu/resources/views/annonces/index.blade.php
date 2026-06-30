@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div class="page-header d-flex justify-content-between align-items-start mb-4">

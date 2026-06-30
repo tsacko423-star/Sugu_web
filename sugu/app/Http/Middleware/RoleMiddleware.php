@@ -14,22 +14,18 @@ class RoleMiddleware
      *
      * @param  Closure(Request): (Response)  $next
      */
-   public function handle(Request $request, Closure $next, $role): Response
-{
-    if (!Auth::check()) {
-        return redirect('/login');
+    public function handle(Request $request, Closure $next, string $roles = 'admin'): Response
+    {
+        if (! Auth::check()) {
+            return redirect()->guest(route('login'));
+        }
+
+        $allowedRoles = explode('|', $roles);
+
+        if (in_array(Auth::user()->role, $allowedRoles, true)) {
+            return $next($request);
+        }
+
+        abort(403, 'Acces refuse');
     }
-
-    $userRole = Auth::user()->role;
-
-    // $role peut être "admin" ou "admin|editor"
-    $roles = explode('|', $role);
-
-    if (!in_array($userRole, $roles)) {
-        abort(403, 'Accès refusé');
-    }
-
-    return $next($request);
-}
-  
 }

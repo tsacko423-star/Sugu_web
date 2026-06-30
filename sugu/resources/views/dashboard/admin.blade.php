@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Dashboard')
+@section('title', 'Tableau de bord')
 
 @section('content')
 <div class="page-header">
-    <h1 class="page-title">Dashboard</h1>
+    <h1 class="page-title">Tableau de bord</h1>
     <p class="page-subtitle">Bienvenue sur votre tableau de bord SUGU-WEB</p>
 </div>
 
@@ -15,8 +15,8 @@
                 <div class="stat-icon primary">
                     <i class="bi bi-people-fill"></i>
                 </div>
-                <span class="stat-trend up">
-                    <i class="bi bi-arrow-up"></i> 12%
+                <span class="stat-trend {{ ($usersTrend ?? 0) >= 0 ? 'up' : 'down' }}">
+                    <i class="bi bi-arrow-{{ ($usersTrend ?? 0) >= 0 ? 'up' : 'down' }}"></i> {{ abs($usersTrend ?? 0) }}%
                 </span>
             </div>
             <div class="stat-value">{{ number_format($totalUsers ?? 0) }}</div>
@@ -29,8 +29,8 @@
                 <div class="stat-icon success">
                     <i class="bi bi-megaphone-fill"></i>
                 </div>
-                <span class="stat-trend up">
-                    <i class="bi bi-arrow-up"></i> 8%
+                <span class="stat-trend {{ ($annoncesTrend ?? 0) >= 0 ? 'up' : 'down' }}">
+                    <i class="bi bi-arrow-{{ ($annoncesTrend ?? 0) >= 0 ? 'up' : 'down' }}"></i> {{ abs($annoncesTrend ?? 0) }}%
                 </span>
             </div>
             <div class="stat-value">{{ number_format($totalAnnonces ?? 0) }}</div>
@@ -41,14 +41,14 @@
         <div class="stat-card animate-fadeInUp delay-3">
             <div class="stat-card-header">
                 <div class="stat-icon warning">
-                    <i class="bi bi-currency-dollar"></i>
+                    <i class="bi bi-chat-dots-fill"></i>
                 </div>
-                <span class="stat-trend up">
-                    <i class="bi bi-arrow-up"></i> 23%
+                <span class="stat-trend {{ ($messagesTrend ?? 0) >= 0 ? 'up' : 'down' }}">
+                    <i class="bi bi-arrow-{{ ($messagesTrend ?? 0) >= 0 ? 'up' : 'down' }}"></i> {{ abs($messagesTrend ?? 0) }}%
                 </span>
             </div>
-            <div class="stat-value">{{ number_format($totalRevenue ?? 0, 0, ',', ' ') }}FCFA</div>
-            <div class="stat-label">Revenus Totaux</div>
+            <div class="stat-value">{{ number_format($totalMessages ?? 0) }}</div>
+            <div class="stat-label">Messages Totaux</div>
         </div>
     </div>
     <div class="col-12 col-sm-6 col-xl-3">
@@ -57,8 +57,8 @@
                 <div class="stat-icon danger">
                     <i class="bi bi-collection-fill"></i>
                 </div>
-                <span class="stat-trend down">
-                    <i class="bi bi-arrow-down"></i> 2%
+                <span class="stat-trend {{ ($categoriesTrend ?? 0) >= 0 ? 'up' : 'down' }}">
+                    <i class="bi bi-arrow-{{ ($categoriesTrend ?? 0) >= 0 ? 'up' : 'down' }}"></i> {{ abs($categoriesTrend ?? 0) }}%
                 </span>
             </div>
             <div class="stat-value">{{ $totalCategories ?? 0 }}</div>
@@ -89,6 +89,33 @@
             <div class="dashboard-card-body">
                 <div class="chart-container">
                     <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-xl-6">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">Repartition des Utilisateurs</h5>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="chart-container">
+                    <canvas id="usersPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-xl-6">
+        <div class="dashboard-card">
+            <div class="dashboard-card-header">
+                <h5 class="dashboard-card-title">Etat des Commandes</h5>
+            </div>
+            <div class="dashboard-card-body">
+                <div class="chart-container">
+                    <canvas id="ordersDoughnutChart"></canvas>
                 </div>
             </div>
         </div>
@@ -185,14 +212,7 @@
                     <span class="badge-status active">Actif</span>
                 </div>
                 @empty
-                <div class="user-item mb-3">
-                    <img src="https://ui-avatars.com/api/?name=Jean+Dupont&background=3b82f6&color=fff" alt="" class="user-avatar">
-                    <div class="user-info flex-grow-1">
-                        <h6>Jean Dupont</h6>
-                        <small>jean.dupont@email.com</small>
-                    </div>
-                    <span class="badge-status active">Actif</span>
-                </div>
+                <p class="mb-0" style="color: var(--sugu-text-muted);">Aucun utilisateur récent.</p>
                 @endforelse
             </div>
         </div>
@@ -214,16 +234,7 @@
                     <span class="activity-time">{{ $activity->created_at->diffForHumans() }}</span>
                 </div>
                 @empty
-                <div class="activity-item">
-                    <div class="activity-icon new-user">
-                        <i class="bi bi-person-plus-fill"></i>
-                    </div>
-                    <div class="activity-content flex-grow-1">
-                        <h6>Nouvel utilisateur</h6>
-                        <p>Jean Dupont s'est inscrit</p>
-                    </div>
-                    <span class="activity-time">Il y a 5 min</span>
-                </div>
+                <p class="mb-0" style="color: var(--sugu-text-muted);">Aucune activité récente.</p>
                 @endforelse
             </div>
         </div>
@@ -232,13 +243,61 @@
 @endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 <script>
 /* global Chart */
 document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Chart === 'undefined') {
+        return;
+    }
+
     const annoncesLabels = @json($monthLabels ?? []);
     const annoncesData = @json($annoncesChartData ?? []);
-    const categoryLabels = @json($categoryChartLabels ?? []);
-    const categoryData = @json($categoryChartData ?? []);
+    const categoryLabels = @json($categorySalesLabels ?? []);
+    const categoryData = @json($categorySalesData ?? []);
+    const userRoleLabels = @json($userRoleLabels ?? []);
+    const userRoleData = @json($userRoleData ?? []);
+    const orderStatusLabels = @json($orderStatusLabels ?? []);
+    const orderStatusData = @json($orderStatusData ?? []);
+
+    const chartColors = {
+        accent: '#f97316',
+        accentSoft: 'rgba(249, 115, 22, 0.15)',
+        info: '#3b82f6',
+        success: '#10b981',
+        warning: '#f59e0b',
+        danger: '#ef4444',
+        muted: '#94a3b8',
+        border: 'rgba(31, 41, 55, 0.65)',
+        card: '#111827',
+        text: '#f8fafc'
+    };
+
+    Chart.defaults.global.defaultFontColor = chartColors.muted;
+    Chart.defaults.global.defaultFontFamily = "'Inter', 'Poppins', sans-serif";
+
+    const sharedTooltip = {
+        backgroundColor: chartColors.card,
+        titleFontColor: chartColors.text,
+        bodyFontColor: chartColors.muted,
+        borderColor: '#1f2937',
+        borderWidth: 1,
+        xPadding: 12,
+        yPadding: 12
+    };
+
+    const axisOptions = {
+        gridLines: {
+            color: chartColors.border,
+            zeroLineColor: chartColors.border,
+            drawBorder: false
+        },
+        ticks: {
+            beginAtZero: true,
+            precision: 0,
+            fontColor: chartColors.muted
+        }
+    };
 
     const annoncesCtx = document.getElementById('annoncesChart').getContext('2d');
     new Chart(annoncesCtx, {
@@ -248,13 +307,13 @@ document.addEventListener('DOMContentLoaded', function() {
             datasets: [{
                 label: 'Annonces publiees',
                 data: annoncesData,
-                borderColor: '#f97316',
-                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                borderColor: chartColors.accent,
+                backgroundColor: chartColors.accentSoft,
                 borderWidth: 3,
                 fill: true,
-                tension: 0.4,
-                pointBackgroundColor: '#f97316',
-                pointBorderColor: '#fff',
+                lineTension: 0.35,
+                pointBackgroundColor: chartColors.accent,
+                pointBorderColor: chartColors.text,
                 pointBorderWidth: 2,
                 pointRadius: 4,
                 pointHoverRadius: 6
@@ -263,81 +322,78 @@ document.addEventListener('DOMContentLoaded', function() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-                tooltip: {
-                    backgroundColor: '#111827',
-                    titleColor: '#f8fafc',
-                    bodyColor: '#94a3b8',
-                    borderColor: '#1f2937',
-                    borderWidth: 1,
-                    padding: 12,
-                    displayColors: false,
-                    callbacks: {
-                        title: function(context) {
-                            return context[0].label + ' {{ now()->year }}';
-                        }
-                    }
-                }
-            },
+            legend: { display: false },
+            tooltips: sharedTooltip,
             scales: {
-                x: {
-                    grid: { color: 'rgba(31, 41, 55, 0.5)', drawBorder: false },
-                    ticks: { color: '#94a3b8' }
-                },
-                y: {
-                    grid: { color: 'rgba(31, 41, 55, 0.5)', drawBorder: false },
-                    ticks: { color: '#94a3b8', precision: 0 },
-                    beginAtZero: true
-                }
+                xAxes: [axisOptions],
+                yAxes: [axisOptions]
             }
         }
     });
 
     const categoriesCtx = document.getElementById('categoriesChart').getContext('2d');
     new Chart(categoriesCtx, {
-        type: 'doughnut',
+        type: 'bar',
         data: {
             labels: categoryLabels,
             datasets: [{
+                label: 'Ventes par categorie',
                 data: categoryData,
-                backgroundColor: ['#3b82f6', '#10b981', '#f97316', '#8b5cf6', '#f59e0b', '#6b7280', '#ef4444', '#14b8a6'],
-                borderWidth: 0,
-                hoverOffset: 10
+                backgroundColor: chartColors.info,
+                borderColor: chartColors.info,
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: '#94a3b8',
-                        padding: 15,
-                        usePointStyle: true,
-                        font: { size: 12 }
-                    }
-                },
-                tooltip: {
-                    backgroundColor: '#111827',
-                    titleColor: '#f8fafc',
-                    bodyColor: '#94a3b8',
-                    borderColor: '#1f2937',
-                    borderWidth: 1,
-                    padding: 12,
-                    callbacks: {
-                        label: function(context) {
-                            return context.label + ': ' + context.parsed + ' annonce(s)';
-                        }
-                    }
-                }
-            },
-            cutout: '65%'
+            legend: { display: false },
+            tooltips: sharedTooltip,
+            scales: {
+                xAxes: [axisOptions],
+                yAxes: [axisOptions]
+            }
+        }
+    });
+
+    new Chart(document.getElementById('usersPieChart'), {
+        type: 'pie',
+        data: {
+            labels: userRoleLabels,
+            datasets: [{
+                data: userRoleData,
+                backgroundColor: [chartColors.danger, chartColors.success, chartColors.warning],
+                borderColor: '#0a0f1a',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } },
+            tooltips: sharedTooltip
+        }
+    });
+
+    new Chart(document.getElementById('ordersDoughnutChart'), {
+        type: 'doughnut',
+        data: {
+            labels: orderStatusLabels,
+            datasets: [{
+                data: orderStatusData,
+                backgroundColor: [chartColors.success, chartColors.warning, chartColors.danger],
+                borderColor: '#0a0f1a',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutoutPercentage: 62,
+            legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } },
+            tooltips: sharedTooltip
         }
     });
 });
 </script>
 @endpush
-
-

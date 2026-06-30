@@ -1,125 +1,94 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Bien;
-use App\Models\Emploi;
-use App\Models\Voiture;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
-
 
 class BienController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $biens = Bien::with('user')->get();
-        $emplois = Emploi::with('user')->get();
-        $voitures = Voiture::with('user')->get();
+        $biens = Bien::with('user')->latest()->get();
 
-       return view('bien.index', compact('biens', 'voitures', 'emplois'));
+        return view('bien.index', compact('biens'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-       return view('bien.create'); 
+        return view('bien.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $request->validate([
-            'titre' => 'required|string|max:255',
-            'ville' => 'required|string|max:255',
-            'prix' => 'required|numeric',
+        $validated = $request->validate([
+            'titre' => ['required', 'string', 'max:255'],
+            'ville' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'prix' => ['required', 'numeric', 'min:0'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
         ]);
 
-        $paths = [];
-        $uploadedImages = $request->file('images') ?? $request->file('image');
-        if ($uploadedImages) {
-            foreach ($uploadedImages as $image) {
-                $paths[] = $image->store('biens', 'public');
-            }
-        }
+        $validated['user_id'] = $request->user()->id;
+        $validated['image'] = $this->storeImages($request);
+        unset($validated['images']);
 
-        Bien::create([
-            'titre' => $request->titre,
-            'ville' => $request->ville,
-            'prix' => $request->prix,
-            'image' => $paths ? json_encode($paths) : null,
-            'user_id' => Auth::id(),
-        ]);
+        Bien::create($validated);
 
-        return redirect()->route('home')
-            ->with('success', 'Bien ajouté avec succès');
+        return redirect()->route('biens.index')->with('success', 'Bien cree avec succes.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {        $bien = Bien::with('user')->findOrFail($id);
+    public function show($id)
+    {
+        $bien = Bien::with('user')->findOrFail($id);
+
         return view('bien.show', compact('bien'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {        $bien = Bien::findOrFail($id);
+    public function edit($id)
+    {
+        $bien = Bien::findOrFail($id);
+
         return view('bien.edit', compact('bien'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
         $bien = Bien::findOrFail($id);
-
-        $request->validate([
-            'titre' => 'required|string|max:255',
-            'ville' => 'required|string|max:255',
-            'prix' => 'required|numeric',
+        $validated = $request->validate([
+            'titre' => ['required', 'string', 'max:255'],
+            'ville' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
+            'prix' => ['required', 'numeric', 'min:0'],
+            'images' => ['nullable', 'array'],
+            'images.*' => ['image', 'max:2048'],
         ]);
 
-        $data = [
-            'titre' => $request->titre,
-            'ville' => $request->ville,
-            'prix' => $request->prix,
-        ];
+        $newImages = $this->storeImages($request);
+        $validated['image'] = array_values(array_filter(array_merge($bien->image ?? [], $newImages)));
+        unset($validated['images']);
 
-        $uploadedImages = $request->file('images') ?? $request->file('image');
-        if ($uploadedImages) {
-            $paths = [];
-            foreach ($uploadedImages as $image) {
-                $paths[] = $image->store('biens', 'public');
-            }
-            $data['image'] = json_encode($paths);
+        $bien->update($validated);
+
+        return redirect()->route('biens.index')->with('success', 'Bien modifie avec succes.');
+    }
+
+    public function destroy($id)
+    {
+        Bien::findOrFail($id)->delete();
+
+        return redirect()->route('biens.index')->with('success', 'Bien supprime avec succes.');
+    }
+
+    private function storeImages(Request $request): array
+    {
+        if (!$request->hasFile('images')) {
+            return [];
         }
 
-        $bien->update($data);
-
-        return redirect()->route('home')
-            ->with('success', 'Bien mis à jour avec succès');
+        return collect($request->file('images'))
+            ->map(fn ($image) => $image->store('biens', 'public'))
+            ->all();
     }
-
-     public function destroy(string $id)
-    {
-        $bien = Bien::findOrFail($id);
-        $bien->delete();
-
-        return redirect()->route('home')
-            ->with('success', 'Bien supprimé avec succès');
-    }
-
-
 }

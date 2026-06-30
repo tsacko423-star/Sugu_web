@@ -7,67 +7,59 @@ use Illuminate\Http\Request;
 
 class AttributsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-         $attributs = Attribut::all();
+        $attributs = Attribut::latest()->get();
+
         return view('attributs.index', compact('attributs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('attributs.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-         Attribut::create([
-            'nom' => $request->nom
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255', 'unique:attributs,nom'],
         ]);
 
-        return back();
+        Attribut::create($validated);
+
+        return redirect()->route('attributs.index')->with('success', 'Attribut cree avec succes.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        $attribut = Attribut::findOrFail($id);
+
+        return view('attributs.show', compact('attribut'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function edit($id)
     {
-        //
+        $attribut = Attribut::findOrFail($id);
+
+        return view('attributs.edit', compact('attribut'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        //
-        
+        $attribut = Attribut::findOrFail($id);
+        $validated = $request->validate([
+            'nom' => ['required', 'string', 'max:255', 'unique:attributs,nom,' . $attribut->id],
+        ]);
+
+        $attribut->update($validated);
+
+        return redirect()->route('attributs.index')->with('success', 'Attribut modifie avec succes.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
-        Attribut::destroy($id);
-        return back();
+        Attribut::findOrFail($id)->delete();
+
+        return redirect()->route('attributs.index')->with('success', 'Attribut supprime avec succes.');
     }
 }
-

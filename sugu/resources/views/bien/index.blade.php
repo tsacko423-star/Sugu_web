@@ -13,10 +13,13 @@
 
 <div class="row g-4">
     @foreach($biens as $bien)
+    @php
+        $firstImage = is_array($bien->image) && count($bien->image) > 0 ? $bien->image[0] : null;
+    @endphp
     <div class="col-md-6 col-lg-4">
         <div class="dashboard-card h-100">
-            @if($bien->image_url)
-                <img src="{{ $bien->image_url }}" class="card-img-top" alt="{{ $bien->titre }}" style="height: 200px; object-fit: cover; width: 100%;">
+            @if($firstImage)
+                <img src="{{ asset('storage/' . $firstImage) }}" class="card-img-top" alt="{{ $bien->titre }}" style="height: 200px; object-fit: cover; width: 100%;">
             @else
                 <div style="height: 200px; background: var(--sugu-bg-card); display: flex; align-items: center; justify-content: center;">
                     <i class="bi bi-building" style="font-size: 3rem; color: var(--sugu-text-muted);"></i>

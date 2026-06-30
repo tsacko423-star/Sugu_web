@@ -2,93 +2,72 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bien;
 use App\Models\Emploi;
-use App\Models\Voiture;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class EmploieController extends Controller
 {
-    // Formulaire admin
+    public function index()
+    {
+        $emplois = Emploi::with('user')->latest()->get();
+
+        return view('emploie.index', compact('emplois'));
+    }
+
     public function create()
     {
         return view('emploie.create');
     }
 
-    // Enregistrer emploi
     public function store(Request $request)
     {
-        $request->validate([
-            'titre' => 'required|string|max:255',
-            'ville' => 'required|string|max:255',
-            'description' => 'required|string',
-            'salaire' => 'required|numeric',
+        $validated = $request->validate([
+            'titre' => ['required', 'string', 'max:255'],
+            'ville' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'salaire' => ['required', 'numeric', 'min:0'],
         ]);
 
-        Emploi::create([
-            'titre' => $request->titre,
-            'ville' => $request->ville,
-            'description' => $request->description,
-            'salaire' => $request->salaire,
-            'user_id' => Auth::id(),
-        ]);
+        $validated['user_id'] = $request->user()->id;
 
-        return redirect()->route('home')
-            ->with('success', 'Emploi ajouté avec succès');
-    }
+        Emploi::create($validated);
 
-    // Page publique
-    public function index()
-    {
-         $biens = Bien::latest()->get();
-         $voitures = Voiture::latest()->get();
-         $emplois = Emploi::latest()->get();
-
-        return view('emploie.index', compact('biens', 'voitures', 'emplois'));
+        return redirect()->route('emplois.index')->with('success', 'Emploi cree avec succes.');
     }
 
     public function show($id)
     {
-        $emploi = Emploi::findOrFail($id);
+        $emploi = Emploi::with('user')->findOrFail($id);
+
         return view('emploie.show', compact('emploi'));
     }
 
     public function edit($id)
     {
         $emploi = Emploi::findOrFail($id);
+
         return view('emploie.edit', compact('emploi'));
     }
-    
+
     public function update(Request $request, $id)
     {
         $emploi = Emploi::findOrFail($id);
-
-        $request->validate([
-            'titre' => 'required|string|max:255',
-            'ville' => 'required|string|max:255',
-            'description' => 'required|string',
-            'salaire' => 'required|numeric',
+        $validated = $request->validate([
+            'titre' => ['required', 'string', 'max:255'],
+            'ville' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'salaire' => ['required', 'numeric', 'min:0'],
         ]);
 
-        $emploi->update([
-            'titre' => $request->titre,
-            'ville' => $request->ville,
-            'description' => $request->description,
-            'salaire' => $request->salaire,
-        ]);
+        $emploi->update($validated);
 
-        return redirect()->route('home')
-            ->with('success', 'Emploi mis à jour avec succès');
+        return redirect()->route('emplois.index')->with('success', 'Emploi modifie avec succes.');
     }
 
     public function destroy($id)
     {
-        $emploi = Emploi::findOrFail($id);
-        $emploi->delete();
+        Emploi::findOrFail($id)->delete();
 
-        return redirect()->route('home')
-            ->with('success', 'Emploi supprimé avec succès');
+        return redirect()->route('emplois.index')->with('success', 'Emploi supprime avec succes.');
     }
 }
-

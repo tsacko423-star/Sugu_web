@@ -2,15 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Attribut extends Model
 {
-    protected $fillable = ['nom'];
+    use HasFactory;
 
-    public function annonceAttributs()
-    {
-        return $this->hasMany(AnnonceAttribut::class);
-    }
+    protected $fillable = [
+        'nom',
+    ];
 }
-

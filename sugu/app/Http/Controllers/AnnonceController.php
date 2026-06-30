@@ -1,209 +1,197 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Annonce;
 use App\Models\AnnonceAttribut;
-use App\Models\Categorie;
-use App\Http\Requests\StoreAnnonceRequest;
-use App\Http\Requests\UpdateAnnonceRequest;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class AnnonceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request)
+    public function index()
     {
-        $annonces = Annonce::with('categorie')
-            ->when($request->routeIs('annonces.index') && Auth::check() && Auth::user()->role !== 'admin', function ($query) {
+        $categories = Category::all();
+        $annonces = Annonce::with(['categorie', 'user'])
+            ->when(Auth::check() && ! $this->isAdmin(Auth::user()), function ($query) {
                 $query->where('user_id', Auth::id());
             })
-            ->orderByDesc('created_at')
+            ->latest()
             ->get();
 
-        return view('annonces.index', compact('annonces'));
+        return view('annonces.index', compact('categories', 'annonces'));
+    }
+
+    public function create()
+    {
+        $categories = Category::all();
+        return view('annonces.create', compact('categories'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'titre' => ['required', 'string', 'max:255'],
+            'categorie_id' => ['required', 'exists:categories,id'],
+            'description' => ['nullable', 'string'],
+            'prix' => ['required', 'numeric', 'min:0'],
+            'images' => ['required', 'array', 'max:5'],
+            'images.*' => ['image', 'max:5120'],
+            'attributs.nom' => ['nullable', 'array'],
+            'attributs.nom.*' => ['nullable', 'string', 'max:255'],
+            'attributs.valeur' => ['nullable', 'array'],
+            'attributs.valeur.*' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $annonce = Annonce::create([
+            'user_id' => $request->user()->id,
+            'categorie_id' => $validated['categorie_id'],
+            'titre' => $validated['titre'],
+            'description' => $validated['description'] ?? null,
+            'prix' => $validated['prix'],
+            'images' => $this->storeImages($request),
+        ]);
+
+        $this->syncAttributs($annonce, $request);
+
+        return redirect()->route('annonces.index')->with('success', 'Annonce creee avec succes.');
+    }
+
+    public function show($id)
+    {
+        $annonce = Annonce::with(['categorie', 'user', 'annonceAttributs'])->findOrFail($id);
+        $this->authorizeAnnonceAccess($annonce);
+
+        return view('annonces.show', compact('annonce'));
+    }
+
+    public function edit($id)
+    {
+        $annonce = Annonce::with('annonceAttributs')->findOrFail($id);
+        $this->authorizeAnnonceAccess($annonce);
+        $categories = Category::all();
+
+        return view('annonces.edit', compact('annonce', 'categories'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $annonce = Annonce::findOrFail($id);
+        $this->authorizeAnnonceAccess($annonce);
+
+        $validated = $request->validate([
+            'titre' => ['required', 'string', 'max:255'],
+            'categorie_id' => ['required', 'exists:categories,id'],
+            'description' => ['nullable', 'string'],
+            'prix' => ['required', 'numeric', 'min:0'],
+            'attributs.nom' => ['nullable', 'array'],
+            'attributs.nom.*' => ['nullable', 'string', 'max:255'],
+            'attributs.valeur' => ['nullable', 'array'],
+            'attributs.valeur.*' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $annonce->update([
+            'categorie_id' => $validated['categorie_id'],
+            'titre' => $validated['titre'],
+            'description' => $validated['description'] ?? null,
+            'prix' => $validated['prix'],
+        ]);
+
+        $this->syncAttributs($annonce, $request);
+
+        return redirect()->route('annonces.index')->with('success', 'Annonce modifiee avec succes.');
+    }
+
+    public function destroy($id)
+    {
+        $annonce = Annonce::findOrFail($id);
+        $this->authorizeAnnonceAccess($annonce);
+        $annonce->delete();
+
+        return redirect()->route('annonces.index')->with('success', 'Annonce supprimee avec succes.');
     }
 
     public function search(Request $request)
     {
-        $query = trim($request->query('q', ''));
+        $categories = Category::all();
+        $query = Annonce::with(['categorie', 'user'])->latest();
 
-        $annonces = Annonce::with('user', 'categorie')
-            ->when($query, function ($builder, $value) {
-                $builder->where(function ($sub) use ($value) {
-                    $sub->where('titre', 'like', "%{$value}%")
-                        ->orWhere('description', 'like', "%{$value}%")
-                        ->orWhereHas('categorie', function ($q) use ($value) {
-                            $q->where('name', 'like', "%{$value}%");
-                        });
-                });
-            })
-            ->orderByDesc('created_at')
+        if ($request->filled('q')) {
+            $search = $request->string('q')->toString();
+            $query->where(function ($builder) use ($search) {
+                $builder->where('titre', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $annonces = $query->get();
+
+        return view('home', compact('categories', 'annonces'));
+    }
+
+    public function category($id)
+    {
+        $category = Category::findOrFail($id);
+        $categories = Category::all();
+        $annonces = Annonce::with(['categorie', 'user'])
+            ->where('categorie_id', $category->id)
+            ->latest()
             ->get();
 
-        return view('annonces.index', compact('annonces'));
+        return view('home', compact('categories', 'annonces', 'category'));
     }
 
-    public function category(string $id)
+    private function storeImages(Request $request): array
     {
-        $categorie = Categorie::findOrFail($id);
-        $annonces = Annonce::with('user', 'categorie')
-            ->where('categorie_id', $id)
-            ->orderByDesc('created_at')
-            ->get();
-
-        return view('annonces.index', compact('annonces'));
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-         $categories = Categorie::all();
-        return view('annonces.create', compact('categories'));
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StoreAnnonceRequest $request)
-    {
-        $imagePaths = [];
-        
-        // Handle image uploads
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('annonces', 'public');
-                $imagePaths[] = $path;
-            }
-        }
-        
-        $annonce = Annonce::create([
-            'titre' => $request->titre,
-            'description' => $request->description,
-            'prix' => $request->prix,
-            'user_id' => Auth::id(),
-            'categorie_id' => $request->categorie_id,
-            'images' => $imagePaths,
-        ]);
-        
-        // ajouter attributs dynamiques
-        if($request->attributs && isset($request->attributs['nom'])){
-            foreach($request->attributs['nom'] as $index => $nom){
-                $valeur = $request->attributs['valeur'][$index] ?? '';
-                if($nom && $valeur){
-                    AnnonceAttribut::create([
-                        'annonce_id' => $annonce->id,
-                        'nom' => $nom,
-                        'valeur' => $valeur,
-                    ]);
-                }
-            }
+        if (!$request->hasFile('images')) {
+            return [];
         }
 
-        return redirect()->route('annonces.index')->with('success', 'Annonce créée avec succès !');
+        return collect($request->file('images'))
+            ->map(fn ($image) => $image->store('annonces', 'public'))
+            ->all();
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    private function syncAttributs(Annonce $annonce, Request $request): void
     {
-        $annonce = Annonce::with('user', 'categorie', 'annonceAttributs')->findOrFail($id);
-        return view('annonces.show', compact('annonce'));
-    }
+        $noms = $request->input('attributs.nom', []);
+        $valeurs = $request->input('attributs.valeur', []);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-       $annonce = Annonce::with('annonceAttributs')->findOrFail($id);
-       $this->authorizeAnnonceOwner($annonce);
-
-       $categories = Categorie::all();
-        return view('annonces.edit', compact('annonce', 'categories'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateAnnonceRequest $request, string $id)
-    {
-        $annonce = Annonce::findOrFail($id);
-        $this->authorizeAnnonceOwner($annonce);
-        
-        $imagePaths = $annonce->images ?? [];
-        
-        // Handle new image uploads
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $path = $image->store('annonces', 'public');
-                $imagePaths[] = $path;
-            }
-        }
-        
-        $annonce->update([
-            'titre' => $request->titre,
-            'description' => $request->description,
-            'prix' => $request->prix,
-            'categorie_id' => $request->categorie_id,
-            'images' => $imagePaths,
-        ]);
-
-        // Supprimer les anciens attributs
         $annonce->annonceAttributs()->delete();
 
-        // Ajouter les nouveaux attributs
-        if($request->attributs && isset($request->attributs['nom'])){
-            foreach($request->attributs['nom'] as $index => $nom){
-                $valeur = $request->attributs['valeur'][$index] ?? '';
-                if($nom && $valeur){
-                    AnnonceAttribut::create([
-                        'annonce_id' => $annonce->id,
-                        'nom' => $nom,
-                        'valeur' => $valeur,
-                    ]);
-                }
-            }
-        }
+        foreach ($noms as $index => $nom) {
+            $valeur = $valeurs[$index] ?? null;
 
-        return redirect()->route('annonces.index')->with('success', 'Annonce modifiée avec succès !');
+            if (!$nom || !$valeur) {
+                continue;
+            }
+
+            AnnonceAttribut::create([
+                'annonce_id' => $annonce->id,
+                'nom' => $nom,
+                'valeur' => $valeur,
+            ]);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    private function authorizeAnnonceAccess(Annonce $annonce): void
     {
-        $annonce = Annonce::findOrFail($id);
-        $this->authorizeAnnonceOwner($annonce);
-        
-        // Delete images
-        if ($annonce->images) {
-            foreach ($annonce->images as $image) {
-                Storage::disk('public')->delete($image);
-            }
-        }
-        
-        $annonce->delete();
-        return back();
-    }
-
-    private function authorizeAnnonceOwner(Annonce $annonce): void
-    {
-        if (Auth::user()->role === 'admin') {
+        if (! Auth::check()) {
             return;
         }
 
-        if ((int) $annonce->user_id !== (int) Auth::id()) {
-            abort(403, 'Accès refusé');
+        if ($this->isAdmin(Auth::user())) {
+            return;
         }
+
+        abort_unless((int) $annonce->user_id === (int) Auth::id(), 403, 'Acces refuse');
     }
 
- 
+    private function isAdmin($user): bool
+    {
+        return (bool) ($user->is_admin ?? false)
+            || (bool) ($user->is_super_admin ?? false)
+            || $user->role === 'admin';
+    }
 }

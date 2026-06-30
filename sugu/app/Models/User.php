@@ -3,62 +3,43 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password','role','numero'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * Get the attributes that should be cast.
+     * The attributes that are mass assignable.
      *
-     * @return array<string, string>
+     * @var array<int, string>
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-    public function isAdmin(){
-    return $this->role === 'admin';
-    }
-    public function isUser(){
-        return $this->role === 'user';
-         }
-    public function annonces(){
-         return $this->hasMany(Annonce::class);
-         }
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role',
+    ];
 
-    public function messagesEnvoyes(){
-          return $this->hasMany(Message::class, 'sender_id');
-         }
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function messagesRecus(){
-          return $this->hasMany(Message::class, 'receiver_id');
-         } 
-         
-          protected static function boot()
-    {
-        parent::boot();
-
-        static::saving(function ($user) {
-            if ($user->is_super_admin) 
-                 // enlever le super admin aux autres
-                {
-                self::where('id', '!=', $user->id)
-                    ->update(['is_super_admin' => false]);
-            }
-        });
-    }
-
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
 }

@@ -3,14 +3,17 @@
 @section('title', $voiture->marque . ' ' . $voiture->modele)
 
 @section('content')
+    @php
+        $firstImage = is_array($voiture->image) && count($voiture->image) > 0 ? $voiture->image[0] : null;
+    @endphp
     <div class="container mt-5">
         <div class="card shadow">
             <div class="card-header"><h2 class="mb-0">{{ $voiture->marque }} {{ $voiture->modele }}</h2></div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-8">
-                        @if($voiture->image)
-                            <img src="{{ asset('storage/' . $voiture->image) }}" alt="{{ $voiture->marque }} {{ $voiture->modele }}" class="img-fluid mb-3 rounded">
+                        @if($firstImage)
+                            <img src="{{ asset('storage/' . $firstImage) }}" alt="{{ $voiture->marque }} {{ $voiture->modele }}" class="img-fluid mb-3 rounded">
                         @endif
 
                         <h5 class="text-muted">Détails</h5>

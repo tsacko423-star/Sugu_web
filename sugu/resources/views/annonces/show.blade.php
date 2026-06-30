@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts.app')
 
 @section('content')
 <div class="container py-5 mt-5">
@@ -11,6 +11,38 @@
             <div class="row gy-4">
 
                 <div class="col-md-8">
+                    @php
+                        $images = is_array($annonce->images) ? $annonce->images : [];
+                    @endphp
+
+                    @if(count($images) > 0)
+                        <div id="annonceImagesCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+                            <div class="carousel-inner rounded-3 overflow-hidden">
+                                @foreach($images as $image)
+                                    <div class="carousel-item {{ $loop->first ? 'active' : '' }}">
+                                        <img src="{{ asset('storage/' . $image) }}"
+                                             class="d-block w-100 annonce-show-image"
+                                             alt="{{ $annonce->titre }} image {{ $loop->iteration }}">
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @if(count($images) > 1)
+                                <button class="carousel-control-prev" type="button" data-bs-target="#annonceImagesCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Image precedente</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#annonceImagesCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Image suivante</span>
+                                </button>
+                            @endif
+                        </div>
+                    @else
+                        <div class="annonce-show-placeholder mb-4">
+                            <i class="bi bi-{{ $annonce->categorie->icon ?? 'tag' }}"></i>
+                        </div>
+                    @endif
 
                     <h5 class="text-secondary">Description</h5>
                     <p class="card-text text-secondary">
@@ -273,3 +305,28 @@
 
 </div>
 @endsection
+
+@push('styles')
+<style>
+    .annonce-show-image {
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        background: var(--sugu-bg-card, #111827);
+    }
+
+    .annonce-show-placeholder {
+        aspect-ratio: 16 / 9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: var(--sugu-bg-card, #111827);
+        border: 1px solid var(--sugu-border, #1f2937);
+        color: var(--sugu-text-muted, #94a3b8);
+    }
+
+    .annonce-show-placeholder i {
+        font-size: clamp(3rem, 8vw, 5rem);
+    }
+</style>
+@endpush

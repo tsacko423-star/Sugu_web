@@ -2,36 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Bien extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
         'titre',
-        'prix',
         'ville',
+        'description',
+        'prix',
         'image',
-        'user_id'
     ];
 
-    public function getImageUrlAttribute()
-    {
-        $image = $this->attributes['image'] ?? null;
-        if (!$image) {
-            return null;
-        }
+    protected $casts = [
+        'image' => 'array',
+        'prix' => 'decimal:2',
+    ];
 
-        $decoded = json_decode($image, true);
-        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-            $path = $decoded[0] ?? null;
-        } else {
-            $path = $image;
-        }
-
-        return $path ? asset('storage/' . $path) : null;
-    }
-
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }

@@ -37,9 +37,9 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Image (optionnel)</label>
-                    <input type="file" name="image" class="form-control">
-                    <div class="form-text">Formats acceptés: JPG, JPEG, PNG. Taille max: 2MB</div>
+                    <label class="form-label">Images (optionnel)</label>
+                    <input type="file" name="images[]" class="form-control" multiple accept="image/*">
+                    <div class="form-text">Formats acceptés: JPG, JPEG, PNG. Taille max: 2MB par image. Vous pouvez sélectionner plusieurs images.</div>
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100">Ajouter</button>

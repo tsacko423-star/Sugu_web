@@ -18,15 +18,19 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/acceuil', [AnnonceController::class, 'index'])->name('acceuil');
 Route::get('/search', [AnnonceController::class, 'search'])->name('search');
 Route::get('/categorie/{id}', [AnnonceController::class, 'category'])->name('categories.public.show');
+Route::resource('voitures', VoitureController::class);
+Route::resource('biens', BienController::class);
+Route::resource('emplois', EmploieController::class);
 
 // Message public : un visiteur peut contacter le vendeur d'une annonce.
 Route::post('/message/send', [MessagesController::class, 'send'])
     ->name('message.send');
 
-Route::middleware('auth')->group(function () {
-    // User Dashboard
+Route::middleware(['auth', 'role:user'])->group(function () {
     Route::get('/dashboard', [UserController::class, 'dashboard'])->name('dashboard');
+});
 
+Route::middleware('auth')->group(function () {
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -35,10 +39,8 @@ Route::middleware('auth')->group(function () {
     // Annonces
     Route::resource('annonces', AnnonceController::class)->except(['show']);
 
-    // Voitures
-    Route::resource('voitures', VoitureController::class);
-    Route::resource('biens', BienController::class);
-    Route::resource('emplois', EmploieController::class);
+    
+    
 
     // Messages
     Route::post('/messages/send', [MessagesController::class, 'send'])
@@ -59,7 +61,7 @@ Route::get('/annonces/{annonce}', [AnnonceController::class, 'show'])
     ->whereNumber('annonce')
     ->name('annonces.show');
 
-Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
     Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
     Route::resource('categories', CategoriesController::class);
 });

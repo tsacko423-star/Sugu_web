@@ -2,20 +2,30 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Voiture extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
         'marque',
         'modele',
         'annee',
         'prix',
         'image',
-        'user_id',
     ];
-    public function user()
-{
-    return $this->belongsTo(User::class);
-}
+
+    protected $casts = [
+        'image' => 'array',
+        'prix' => 'decimal:2',
+    ];
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 }

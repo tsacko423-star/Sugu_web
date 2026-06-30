@@ -3,16 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Annonce;
-use App\Models\Categorie;
+use App\Models\Category;
+use Illuminate\View\View;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(): View
     {
-        $categories = Categorie::orderBy('name')->get();
-        $annonces = Annonce::with('categorie')
-            ->orderByDesc('created_at')
-            ->get();
+        $categories = Category::all();
+        $annonces = Annonce::with(['categorie', 'user'])->latest()->get();
 
         return view('home', compact('categories', 'annonces'));
     }
